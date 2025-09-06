@@ -34,7 +34,7 @@ export default function ContactForm() {
         },
         to: [
           {
-            email: "rb2306114@gmail.com",
+            email: "bookrelaxpackers@gmail.com",
             name: "Relax Packers Team"
           }
         ],
