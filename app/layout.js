@@ -111,17 +111,17 @@ export const metadata = {
   icons: {
     icon: [
       { url: '/favicon.ico' },
-      { url: '/images/relax-logo.png', sizes: '16x16', type: 'image/png' },
-      { url: '/images/relax-logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/images/relax-small-icon-logo.png', sizes: '16x16', type: 'image/png' },
+      { url: '/images/relax-small-icon-logo.png', sizes: '32x32', type: 'image/png' },
     ],
     apple: [
-      { url: '/images/relax-logo.png' },
-      { url: '/images/relax-logo.png', sizes: '180x180', type: 'image/png' },
+      { url: '/images/relax-small-icon-logo.png' },
+      { url: '/images/relax-small-icon-logo.png', sizes: '180x180', type: 'image/png' },
     ],
     other: [
       {
         rel: 'mask-icon',
-        url: '/images/relax-logo.png',
+        url: '/images/relax-small-icon-logo.png',
         color: '#5bbad5',
       },
     ],
@@ -197,7 +197,7 @@ export default function RootLayout({ children }) {
               "@id": `${SITE_URL}#movingcompany`,
               name: BUSINESS_NAME,
               url: SITE_URL,
-              logo: `${SITE_URL}/logo.png`,
+              logo: `${SITE_URL}/images/relax-small-icon-logo.png`,
               description: "Professional packers and movers service providing relocation, packing, and courier services across India.",
               sameAs: [
                 "https://www.facebook.com/share/1XKoaHzW7t/",
