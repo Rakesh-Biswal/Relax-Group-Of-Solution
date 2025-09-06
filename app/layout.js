@@ -197,7 +197,7 @@ export default function RootLayout({ children }) {
               "@id": `${SITE_URL}#movingcompany`,
               name: BUSINESS_NAME,
               url: SITE_URL,
-              logo: `${SITE_URL}/images/logo.png`,
+              logo: `${SITE_URL}/images/relax-logo.png`,
               description: "Professional packers and movers service providing relocation, packing, and courier services across India.",
               sameAs: [
                 "https://www.facebook.com/share/1XKoaHzW7t/",
