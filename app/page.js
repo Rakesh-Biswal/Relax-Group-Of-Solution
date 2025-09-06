@@ -18,13 +18,13 @@ export default function HomePage() {
       <Header />
       <ServiceBoxes />
       <HeroAnimated />
+      <ContactForm />
       <FeaturesGrid />
       <BlogRow />
       <Partners />
       <TrackingShowcase />
       <StatsCounters />
       <Testimonials />
-      <ContactForm />
       <Footer />
     </main>
   )

@@ -2,15 +2,64 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Loader2, Send, Phone, MapPin, User, Truck } from "lucide-react"
+import { Loader2, Send, Phone, MapPin, User, Truck, X } from "lucide-react"
+
+// Popup Component
+function SuccessPopup({ onClose }) {
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <motion.div 
+        className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <button 
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          <X size={20} />
+        </button>
+        
+        <div className="text-center">
+          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-6">
+            <svg className="h-8 w-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          
+          <h3 className="text-2xl font-bold text-gray-800 mb-4">
+            Thank You for Choosing RelaxGroup!
+          </h3>
+          
+          <p className="text-gray-600 mb-6 leading-relaxed">
+            Thank you for choosing RealxGroup for your shifting/Packers movers service. 
+            Stay tuned, we will reply within 30 minutes with a professional quote 
+            tailored to your moving needs.
+          </p>
+          
+          <button
+            onClick={onClose}
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-xl transition-all duration-300"
+          >
+            OK
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  )
+}
 
 export default function ContactForm() {
   const [loading, setLoading] = useState(false)
   const [status, setStatus] = useState(null)
+  const [showPopup, setShowPopup] = useState(false)
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    city: ""
+    city: "",
+    fromLocation: "",
+    toLocation: ""
   })
 
   const handleInputChange = (e) => {
@@ -50,6 +99,8 @@ export default function ContactForm() {
               .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
               .detail { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #667eea; }
               .footer { text-align: center; margin-top: 20px; color: #666; font-size: 14px; }
+              .route { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #ff7e5f; display: flex; align-items: center; }
+              .route-icon { font-size: 24px; margin-right: 10px; }
             </style>
           </head>
           <body>
@@ -68,6 +119,13 @@ export default function ContactForm() {
                 <div class="detail">
                   <strong>🏙️ City:</strong> ${formData.city}
                 </div>
+                <div class="route">
+                  <span class="route-icon">📍</span>
+                  <div>
+                    <strong>Moving From:</strong> ${formData.fromLocation}<br>
+                    <strong>Moving To:</strong> ${formData.toLocation}
+                  </div>
+                </div>
                 <div class="footer">
                   <p>This inquiry was submitted through relaxpackers.com</p>
                   <p>📍 Relax Packers & Movers - Your Trusted Moving Partner</p>
@@ -81,6 +139,8 @@ export default function ContactForm() {
           New Moving Inquiry from ${formData.name}
           Phone: ${formData.phone}
           City: ${formData.city}
+          Moving From: ${formData.fromLocation}
+          Moving To: ${formData.toLocation}
           
           This inquiry was submitted through relaxpackers.com
           Relax Packers & Movers - Your Trusted Moving Partner
@@ -100,10 +160,13 @@ export default function ContactForm() {
 
       if (response.ok) {
         setStatus("success")
+        setShowPopup(true)
         setFormData({
           name: "",
           phone: "",
-          city: ""
+          city: "",
+          fromLocation: "",
+          toLocation: ""
         })
       } else {
         setStatus("error")
@@ -131,7 +194,7 @@ export default function ContactForm() {
         </div>
 
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
-          Start Your Moving Journey
+          Moving Made Simple
         </h2>
         <p className="text-lg md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
           Get a free, no-obligation quote for your relocation. Our team will contact you within 30 minutes.
@@ -196,12 +259,56 @@ export default function ContactForm() {
                 <Phone size={20} className="absolute left-4 top-11 text-gray-400" />
               </motion.div>
 
+              {/* From Location Field */}
+              <motion.div
+                className="relative"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.45 }}
+              >
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <MapPin size={16} className="inline mr-2" />
+                  Moving From *
+                </label>
+                <input
+                  required
+                  name="fromLocation"
+                  value={formData.fromLocation}
+                  onChange={handleInputChange}
+                  placeholder="Current location/address"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 pl-12 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                />
+                <MapPin size={20} className="absolute left-4 top-11 text-gray-400" />
+              </motion.div>
+
+              {/* To Location Field */}
+              <motion.div
+                className="relative"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4, delay: 0.5 }}
+              >
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  <MapPin size={16} className="inline mr-2" />
+                  Moving To *
+                </label>
+                <input
+                  required
+                  name="toLocation"
+                  value={formData.toLocation}
+                  onChange={handleInputChange}
+                  placeholder="Destination location/address"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-3 pl-12 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                />
+                <MapPin size={20} className="absolute left-4 top-11 text-gray-400" />
+              </motion.div>
+
               {/* City Field */}
               <motion.div
                 className="relative"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.5 }}
+                transition={{ duration: 0.4, delay: 0.55 }}
               >
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   <MapPin size={16} className="inline mr-2" />
@@ -244,19 +351,13 @@ export default function ContactForm() {
             </motion.button>
 
             {/* Status Message */}
-            {status && (
+            {status === "error" && (
               <motion.div
-                className={`mt-4 p-4 rounded-xl text-center ${status === "success"
-                    ? "bg-green-100 text-green-700 border border-green-200"
-                    : "bg-red-100 text-red-700 border border-red-200"
-                  }`}
+                className="mt-4 p-4 rounded-xl text-center bg-red-100 text-red-700 border border-red-200"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
               >
-                {status === "success"
-                  ? "✅ Thank you! We've received your inquiry and will contact you within 30 minutes."
-                  : "❌ Something went wrong. Please try again or call us directly."
-                }
+                ❌ Something went wrong. Please try again or call us directly.
               </motion.div>
             )}
           </form>
@@ -279,9 +380,11 @@ export default function ContactForm() {
             <Phone size={20} className="text-blue-600" />
             <span className="font-semibold text-gray-800">+91 97770 12315</span>
           </a>
-
         </div>
       </motion.div>
+
+      {/* Success Popup */}
+      {showPopup && <SuccessPopup onClose={() => setShowPopup(false)} />}
 
       {/* Background Elements */}
       <div className="absolute left-0 right-0 -z-10 opacity-5">

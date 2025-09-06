@@ -51,11 +51,18 @@ export default function HeroAnimated() {
             </p>
 
             <button
-              onClick={() => window.location.href = "tel:+919777012315"}
-              className="mt-4 bg-[var(--color-primary)] hover:bg-[var(--color-primary-dark)] text-white px-5 py-2 rounded-full text-sm md:text-base font-medium transition-colors duration-200 flex items-center gap-2 mx-auto md:mx-0"
+              onClick={() => {
+                const message = encodeURIComponent(
+                  "Hello Relax Packers & Movers,  I just visited Your Website & am interested in your transportation services. Please provide me with more details about the service demo and shifting process."
+                );
+                window.open(`https://wa.me/919777012315?text=${message}`, "_blank");
+              }}
+              className="mt-4 bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-full text-sm md:text-base font-medium transition-colors duration-200 flex items-center gap-2 mx-auto md:mx-0"
             >
-              Call Now <ArrowRight size={16} />
+              WhatsApp Now <ArrowRight size={16} />
             </button>
+
+
 
           </div>
 
