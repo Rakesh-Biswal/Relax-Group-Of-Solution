@@ -57,7 +57,6 @@ export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    city: "",
     fromLocation: "",
     toLocation: ""
   })
@@ -116,9 +115,6 @@ export default function ContactForm() {
                 <div class="detail">
                   <strong>📞 Phone Number:</strong> ${formData.phone}
                 </div>
-                <div class="detail">
-                  <strong>🏙️ City:</strong> ${formData.city}
-                </div>
                 <div class="route">
                   <span class="route-icon">📍</span>
                   <div>
@@ -138,7 +134,6 @@ export default function ContactForm() {
         textContent: `
           New Moving Inquiry from ${formData.name}
           Phone: ${formData.phone}
-          City: ${formData.city}
           Moving From: ${formData.fromLocation}
           Moving To: ${formData.toLocation}
           
@@ -164,7 +159,6 @@ export default function ContactForm() {
         setFormData({
           name: "",
           phone: "",
-          city: "",
           fromLocation: "",
           toLocation: ""
         })
@@ -298,28 +292,6 @@ export default function ContactForm() {
                   value={formData.toLocation}
                   onChange={handleInputChange}
                   placeholder="Destination location/address"
-                  className="w-full border border-gray-300 rounded-xl px-4 py-3 pl-12 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
-                />
-                <MapPin size={20} className="absolute left-4 top-11 text-gray-400" />
-              </motion.div>
-
-              {/* City Field */}
-              <motion.div
-                className="relative"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: 0.55 }}
-              >
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  <MapPin size={16} className="inline mr-2" />
-                  City *
-                </label>
-                <input
-                  required
-                  name="city"
-                  value={formData.city}
-                  onChange={handleInputChange}
-                  placeholder="Enter your city"
                   className="w-full border border-gray-300 rounded-xl px-4 py-3 pl-12 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 />
                 <MapPin size={20} className="absolute left-4 top-11 text-gray-400" />

@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight , Phone} from "lucide-react"
 import Image from "next/image"
 import { AnimatePresence } from "framer-motion"
 import { useEffect, useRef, useState } from "react"
@@ -50,17 +50,30 @@ export default function HeroAnimated() {
               Instant scheduling, live tracking, and insured moving with Relax.
             </p>
 
-            <button
-              onClick={() => {
-                const message = encodeURIComponent(
-                  "Hello Relax Packers & Movers,  I just visited Your Website & am interested in your transportation services. Please provide me with more details about the service demo and shifting process."
-                );
-                window.open(`https://wa.me/919777012315?text=${message}`, "_blank");
-              }}
-              className="mt-4 bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-full text-sm md:text-base font-medium transition-colors duration-200 flex items-center gap-2 mx-auto md:mx-0"
-            >
-              WhatsApp Now <ArrowRight size={16} />
-            </button>
+            <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+
+              <button
+                onClick={() => {
+                  const message = encodeURIComponent(
+                    "Hello Relax Packers & Movers,  I just visited Your Website & am interested in your transportation services. Please provide me with more details about the service demo and shifting process."
+                  );
+                  window.open(`https://wa.me/919777012315?text=${message}`, "_blank");
+                }}
+                className="mt-4 bg-green-500 hover:bg-green-600 text-white px-5 py-2 rounded-full text-sm md:text-base font-medium transition-colors duration-200 flex items-center gap-2 mx-auto md:mx-0"
+              >
+                WhatsApp Now <ArrowRight size={16} />
+              </button>
+
+              <button
+                onClick={() => {
+                  window.open('tel:+919777012315', '_self');
+                }}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-full text-sm md:text-base font-medium transition-colors duration-200 flex items-center gap-2 justify-center mx-auto md:mx-0"
+              >
+                Call Now <Phone size={16} />
+              </button>
+
+            </div>
 
 
 

@@ -35,17 +35,18 @@ export default function IntroAnimation({ onSkip }) {
         setAnimationData(messages[next].animation)
         return next
       })
-    }, 1000)
+    }, 800) // reduced from 1000ms to 800ms
 
     const introTimer = setTimeout(() => {
       onSkip && onSkip()
-    }, 4000)
+    }, 2200) // reduced from 4000ms to 3200ms
 
     return () => {
       clearInterval(messageTimer)
       clearTimeout(introTimer)
     }
   }, [messages.length, onSkip])
+
 
   const skipIntro = () => {
     onSkip && onSkip()
@@ -98,16 +99,18 @@ export default function IntroAnimation({ onSkip }) {
 
         {/* Main Content */}
         <div className="relative z-10 flex flex-col items-center justify-center px-4 text-center">
-          <div className="mb-2">
-            <div className="w-64 h-64">
+          <div className="mb-2 w-full max-w-xs md:max-w-md">
+            <div className="w-full aspect-square relative overflow-hidden">
               <Lottie
                 animationData={animationData}
                 loop={true}
                 autoplay={true}
-                className="w-full h-full"
+                className="w-full h-full object-contain"
               />
             </div>
           </div>
+
+
 
           <div className="mb-6">
             <Image
