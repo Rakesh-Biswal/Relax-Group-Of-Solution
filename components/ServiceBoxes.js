@@ -9,7 +9,7 @@ const Lottie = dynamic(() => import("lottie-react"), {
   ssr: false,
   loading: () => (
     <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center">
-      <div className="text-gray-400 text-sm">Loading animation...</div>
+      <div className="text-gray-400 text-sm">...</div>
     </div>
   ),
 })
@@ -68,8 +68,7 @@ export default function ServiceBoxes() {
   const [currentOfferIndex, setCurrentOfferIndex] = useState(0)
   const [showLottie, setShowLottie] = useState(true)
   const [lottieIndex, setLottieIndex] = useState(0)
-  const [servicesVisible, setServicesVisible] = useState(false)
-  const containerRef = useRef(null)
+  const [servicesVisible, setServicesVisible] = useState(true) // Changed to true for instant show
 
   const lottieAnimations = [
     { data: Congrats, text: "Congratulations!" },
@@ -86,35 +85,27 @@ export default function ServiceBoxes() {
     { text: "EXPERT TEAM", subtext: "Trained professionals" },
   ]
 
+  // Remove the initial delay for services
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setServicesVisible(true)
-    }, 4000) // Delay to create staggered animation effect
-
-    return () => clearTimeout(timer)
+    setServicesVisible(true)
   }, [])
 
+  // Start Lottie animations immediately without delay
   useEffect(() => {
     if (!showLottie) return
 
     let i = 0
     setLottieIndex(i)
 
-    // delay starting lottie animation
-    const delayTimer = setTimeout(() => {
-      const lottieTimer = setInterval(() => {
-        i = (i + 1) % lottieAnimations.length
-        setLottieIndex(i)
-      }, 3000)
+    const lottieTimer = setInterval(() => {
+      i = (i + 1) % lottieAnimations.length
+      setLottieIndex(i)
+    }, 3000)
 
-      // cleanup
-      return () => clearInterval(lottieTimer)
-    }, 5000) // start after 4s
-
-    return () => clearTimeout(delayTimer)
+    return () => clearInterval(lottieTimer)
   }, [showLottie, lottieAnimations.length])
 
-
+  // Text offers rotation
   useEffect(() => {
     let offerTimer
 
@@ -158,18 +149,20 @@ export default function ServiceBoxes() {
   const Box = ({ title, icon: IconCmp, color, highlight, onClick }) => (
     <button
       onClick={onClick}
-      className={`flex-1 p-3 text-left rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg ${highlight
+      className={`flex-1 p-3 text-left rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg ${
+        highlight
           ? "bg-gradient-to-br from-[var(--color-primary)] to-purple-600 text-white shadow-lg"
           : "bg-white/80 text-gray-800"
-        }`}
+      }`}
       aria-label={title}
       style={{
         boxShadow: highlight ? "0 8px 20px -10px rgba(99, 102, 241, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.05)",
       }}
     >
       <div
-        className={`h-10 w-10 rounded-full flex items-center justify-center mb-2 ${highlight ? "bg-white/20" : "bg-white/50"
-          }`}
+        className={`h-10 w-10 rounded-full flex items-center justify-center mb-2 ${
+          highlight ? "bg-white/20" : "bg-white/50"
+        }`}
       >
         <IconCmp size={18} className={highlight ? "text-white" : ""} color={highlight ? "white" : color} />
       </div>
@@ -185,9 +178,9 @@ export default function ServiceBoxes() {
   )
 
   return (
-    <div className="container mt-6 mb-8" ref={containerRef}>
+    <div className="w-full max-w-full mt-6 mb-8 mx-auto overflow-hidden">
       {/* Premium Offer Card with 3D Gradient Background */}
-      <div className="relative bg-gradient-to-br from-amber-400/10 via-orange-300/15 to-red-400/10 rounded-2xl p-2 overflow-hidden border border-amber-200/50 shadow-lg">
+      <div className="relative bg-gradient-to-br from-amber-400/10 via-orange-300/15 to-red-400/10 rounded-2xl p-2 overflow-hidden border border-amber-200/50 shadow-lg w-full">
         {/* 3D Animated background elements */}
         <div className="absolute inset-0 overflow-hidden">
           {/* Animated gradient orbs */}
@@ -227,7 +220,7 @@ export default function ServiceBoxes() {
           <div className="absolute bottom-8 right-12 w-16 h-16 border-2 border-red-300/30 rounded-full animate-ping-slow"></div>
         </div>
 
-        <div className="relative z-10">
+        <div className="relative z-10 w-full">
           <button
             onClick={toggleOfferMode}
             className="absolute top-2 right-2 z-20 bg-white/20 backdrop-blur-sm rounded-full p-2 text-amber-700 hover:bg-white/30 transition-all duration-200"
@@ -245,24 +238,27 @@ export default function ServiceBoxes() {
           />
 
           <div
-            className={`bg-white/80 backdrop-blur-md rounded-xl p-3 border border-amber-100/70 shadow-sm transition-all duration-700 ease-out ${servicesVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-4"
-              }`}
+            className={`bg-white/80 backdrop-blur-md rounded-xl p-3 border border-amber-100/70 shadow-sm transition-all duration-300 ease-out ${
+              servicesVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-4"
+            }`}
           >
             <h3
-              className={`text-sm font-semibold text-amber-800 mb-3 text-center uppercase tracking-wide transition-all duration-500 delay-200 ${servicesVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-2"
-                }`}
+              className={`text-sm font-semibold text-amber-800 mb-3 text-center uppercase tracking-wide transition-all duration-300 ${
+                servicesVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-2"
+              }`}
             >
               Our Services
             </h3>
 
-            <div className="flex gap-2">
+            <div className="flex gap-2 w-full">
               {services.map((service, index) => (
                 <div
                   key={index}
-                  className={`flex-1 transition-all duration-500 ease-out ${servicesVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-3"
-                    }`}
+                  className={`flex-1 transition-all duration-300 ease-out ${
+                    servicesVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-3"
+                  }`}
                   style={{
-                    transitionDelay: `${300 + index * 100}ms`,
+                    transitionDelay: `${index * 50}ms`,
                   }}
                 >
                   <Box
