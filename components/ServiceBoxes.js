@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { Package, Send, Wrench } from "lucide-react"
 import dynamic from "next/dynamic"
+import { useRouter } from "next/navigation"
 
 // Dynamically import Lottie
 const Lottie = dynamic(() => import("lottie-react"), {
@@ -69,6 +70,8 @@ export default function ServiceBoxes() {
   const [showLottie, setShowLottie] = useState(true)
   const [lottieIndex, setLottieIndex] = useState(0)
   const [servicesVisible, setServicesVisible] = useState(true) // Changed to true for instant show
+  const [featureVisible, setfeatureVisible] = useState(true) // Changed to true for instant show
+  const router = useRouter()
 
   const lottieAnimations = [
     { data: Congrats, text: "Congratulations!" },
@@ -149,20 +152,18 @@ export default function ServiceBoxes() {
   const Box = ({ title, icon: IconCmp, color, highlight, onClick }) => (
     <button
       onClick={onClick}
-      className={`flex-1 p-3 text-left rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg ${
-        highlight
-          ? "bg-gradient-to-br from-[var(--color-primary)] to-purple-600 text-white shadow-lg"
-          : "bg-white/80 text-gray-800"
-      }`}
+      className={`flex-1 p-3 text-left rounded-xl transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg ${highlight
+        ? "bg-gradient-to-br from-[var(--color-primary)] to-purple-600 text-white shadow-lg"
+        : "bg-white/80 text-gray-800"
+        }`}
       aria-label={title}
       style={{
         boxShadow: highlight ? "0 8px 20px -10px rgba(99, 102, 241, 0.4)" : "0 4px 12px rgba(0, 0, 0, 0.05)",
       }}
     >
       <div
-        className={`h-10 w-10 rounded-full flex items-center justify-center mb-2 ${
-          highlight ? "bg-white/20" : "bg-white/50"
-        }`}
+        className={`h-10 w-10 rounded-full flex items-center justify-center mb-2 ${highlight ? "bg-white/20" : "bg-white/50"
+          }`}
       >
         <IconCmp size={18} className={highlight ? "text-white" : ""} color={highlight ? "white" : color} />
       </div>
@@ -238,40 +239,40 @@ export default function ServiceBoxes() {
           />
 
           <div
-            className={`bg-white/80 backdrop-blur-md rounded-xl p-3 border border-amber-100/70 shadow-sm transition-all duration-300 ease-out ${
-              servicesVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-4"
-            }`}
+            className={`relative bg-gradient-to-br from-white/90 to-amber-50/80 backdrop-blur-xl rounded-2xl p-4 border border-amber-200/60 shadow-[0_4px_20px_rgba(255,193,7,0.15)] transition-all duration-700 ease-out transform ${featureVisible
+                ? "opacity-100 translate-y-0 scale-100"
+                : "opacity-0 translate-y-4 scale-95"
+              } hover:shadow-[0_6px_25px_rgba(255,193,7,0.25)] hover:scale-[1.02]`}
           >
+            {/* Floating Glow Effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-amber-300/10 to-amber-500/10 blur-2xl rounded-2xl animate-pulse-slow"></div>
+
             <h3
-              className={`text-sm font-semibold text-amber-800 mb-3 text-center uppercase tracking-wide transition-all duration-300 ${
-                servicesVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-2"
-              }`}
+              className={`text-sm font-semibold text-amber-800 mb-2 text-center uppercase tracking-wider drop-shadow-sm transition-all duration-700 ${featureVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+                }`}
             >
-              Our Services
+              🚀 New Smart Feature
             </h3>
 
-            <div className="flex gap-2 w-full">
-              {services.map((service, index) => (
-                <div
-                  key={index}
-                  className={`flex-1 transition-all duration-300 ease-out ${
-                    servicesVisible ? "opacity-100 transform translate-y-0" : "opacity-0 transform translate-y-3"
-                  }`}
-                  style={{
-                    transitionDelay: `${index * 50}ms`,
-                  }}
-                >
-                  <Box
-                    title={service.title}
-                    icon={service.icon}
-                    color={service.color}
-                    highlight={service.highlight}
-                    onClick={service.onClick}
-                  />
-                </div>
-              ))}
+            <div
+              className={`flex flex-col items-center justify-center text-center transition-all duration-700 ${featureVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
+                }`}
+            >
+              <p className="text-[13px] text-gray-700 mb-3 italic leading-tight">
+                Experience our <span className="font-semibold text-amber-700">Budget Calculator</span> —
+                smartly designed to estimate your moving cost in seconds.
+              </p>
+
+              <button
+                onClick={() => router.push("/dashboard/pricing")}
+                className="px-5 py-[6px] text-sm font-semibold text-white bg-gradient-to-r from-amber-600 to-amber-500 rounded-lg shadow-md hover:shadow-[0_4px_12px_rgba(255,193,7,0.4)] hover:scale-105 active:scale-95 transition-all duration-300"
+              >
+                CheckOut
+              </button>
             </div>
           </div>
+
+
         </div>
       </div>
 

@@ -13,7 +13,12 @@ export default function Header() {
   const menuItems = [
     { label: "Our Pricing", href: "/dashboard/pricing" },
     { label: "About Us", href: "/dashboard/about" },
-    { label: "Terms & Con..", href: "/dashboard/terms" }
+    { label: "Terms & Con..", href: "/dashboard/terms" },
+    { label: "Achievements", href: "/dashboard/achievement" },
+    { label: "Trusted Partners", href: "#partners" },
+    { label: "Live Tracking", href: "#tracking" },
+    { label: "Feedback", href: "#feedback" },
+    { label: "Footer", href: "#footer" }
   ]
 
   return (
@@ -27,7 +32,7 @@ export default function Header() {
           <div className="flex items-center gap-3">
             <Image src="/images/relax-logo.png" width={160} height={32} alt="Relax Packers & Movers logo" priority />
           </div>
-          
+
           {/* Desktop Navigation - Hidden on mobile */}
           <nav className="hidden md:flex items-center gap-8">
             {menuItems.map((item) => (
@@ -43,7 +48,7 @@ export default function Header() {
           </nav>
 
           {/* Mobile Menu Button - Hidden on desktop */}
-          <button 
+          <button
             className="md:hidden h-9 w-9 rounded-full bg-[var(--color-accent)] text-white flex items-center justify-center transition-all duration-300 hover:bg-[var(--color-accent-dark)]"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             aria-label="Toggle menu"
@@ -78,10 +83,10 @@ export default function Header() {
           <MapPin size={18} className="text-[var(--color-accent)]" />
           <div className="text-left min-w-0">
             <div className="text-[13px] font-extrabold leading-none">
-              Pan-India Service
+              Want to Relocate/ Shipping Service
             </div>
             <div className="text-xs subtle truncate">
-              Packers & Movers with Pan-India Delivery & Courier Network
+              Call Us at +91 9777012315
             </div>
           </div>
           <ChevronDown size={18} className="ml-auto text-[#64748B] transition-transform duration-300 hover:rotate-180" />

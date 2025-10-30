@@ -18,8 +18,8 @@ export default function HomePage() {
     <main className="mx-2 bg-background text-foreground">
       <Header />
       <ServiceBoxes />
-      <HeroAnimated />
       <ContactForm />
+      <HeroAnimated />
       <FeaturesGrid />
       <BlogRow />
       <Partners />
