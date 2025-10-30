@@ -11,10 +11,10 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const menuItems = [
-    { label: "Our Pricing", href: "/dashboard/pricing" },
-    { label: "About Us", href: "/dashboard/about" },
-    { label: "Terms & Con..", href: "/dashboard/terms" },
-    { label: "Achievements", href: "/dashboard/achievement" },
+    { label: "Our Pricing", href: "/pricing" },
+    { label: "About Us", href: "/about" },
+    { label: "Terms & Con..", href: "/terms" },
+    { label: "Achievements", href: "/achievement" },
     { label: "Trusted Partners", href: "#partners" },
     { label: "Live Tracking", href: "#tracking" },
     { label: "Feedback", href: "#feedback" },
@@ -30,7 +30,7 @@ export default function Header() {
       <header className="container pt-3 pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Image src="/images/relax-logo.png" width={160} height={32} alt="Relax Packers & Movers logo" priority />
+            <Image src="/images/relax-nav-logo.png" width={160} height={32} alt="Relax Packers & Movers logo" priority />
           </div>
 
           {/* Desktop Navigation - Hidden on mobile */}
