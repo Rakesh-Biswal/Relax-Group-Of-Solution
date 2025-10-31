@@ -17,19 +17,6 @@ const BUSINESS_ADDRESS = {
   country: "IN"
 }
 
-// Image Specifications - Add these images to your public/images folder
-/*
-REQUIRED IMAGES AND THEIR SIZES:
-1. Logo: /images/relax-logo.png (Recommended: 300x100px, PNG with transparent background)
-2. Favicon: /favicon.ico (16x16, 32x32, 48x48 pixels)
-3. Apple Touch Icon: /images/apple-touch-icon.png (180x180px, PNG)
-4. Open Graph Image: /images/og-image.jpg (1200x630px, JPG/PNG)
-5. Twitter Card Image: /images/twitter-card.jpg (1200x600px, JPG/PNG)
-6. Schema.org Logo: /images/schema-logo.png (300x100px, PNG)
-7. Mobile App Icon: /images/icon-192.png (192x192px, PNG)
-8. Large App Icon: /images/icon-512.png (512x512px, PNG)
-*/
-
 // Bilingual metadata
 export const metadata = {
   title: {
@@ -84,17 +71,10 @@ export const metadata = {
     locale: "en_IN",
     images: [
       {
-        url: `${SITE_URL}/images/og-image.jpg`, // Required: 1200x630px
+        url: `${SITE_URL}/images/og-image1.jpg`, // Required: 1200x630px
         width: 1200,
         height: 630,
         alt: "Relax Packers & Movers - Professional Relocation Services in Odisha & Across India",
-        type: "image/jpeg",
-      },
-      {
-        url: `${SITE_URL}/images/og-image-square.jpg`, // Optional: 1000x1000px for square format
-        width: 1000,
-        height: 1000,
-        alt: "Relax Packers & Movers - Your Trusted Moving Partner",
         type: "image/jpeg",
       }
     ],
@@ -127,15 +107,13 @@ export const metadata = {
   },
   verification: {
     google: "your-google-search-console-verification-code", // Add your Google Search Console code
-    // yandex: "yandex-verification-code", // Optional for Russian market
-    // yahoo: "yahoo-verification-code", // Optional
   },
   icons: {
     icon: [
-      { url: '/images/favicon.ico' }, // Standard favicon - 16x16, 32x32
-      { url: '/images/favicon.ico', sizes: '16x16', type: 'image/png' },
-      { url: '/images/favicon1.ico', sizes: '32x32', type: 'image/png' },
-      { url: '/images/favicon2.ico', sizes: '48x48', type: 'image/png' },
+      { url: '/favicon.ico' }, // Standard favicon in root
+      { url: '/images/icon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/images/icon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: '/images/icon-48.png', sizes: '48x48', type: 'image/png' },
     ],
     apple: [
       { url: '/images/apple-touch-icon.png' }, // 180x180px for iOS
@@ -146,12 +124,12 @@ export const metadata = {
       {
         rel: 'mask-icon',
         url: '/images/safari-pinned-tab.svg',
-        color: '#be843dff', // Your brand color
+        color: '#a4723dff', // Your brand color
       },
     ],
   },
   manifest: '/manifest.json', // For PWA
-  themeColor: '#a4723dff', // Your brand blue color
+  themeColor: '#a4723dff', // Your brand color
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -254,9 +232,6 @@ export default function RootLayout({ children }) {
         <meta name="twitter:data1" content="2010" />
         <meta name="twitter:label2" content="Services" />
         <meta name="twitter:data2" content="Home & Office Relocation" />
-
-        {/* Facebook Domain Verification (if needed) */}
-        {/* <meta name="facebook-domain-verification" content="your-facebook-verification-code" /> */}
 
         {/* Additional Performance Optimizations */}
         <meta name="HandheldFriendly" content="true" />
@@ -577,21 +552,6 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
-
-        {/* Microsoft Clarity (Optional) */}
-        {/* <Script
-          id="microsoft-clarity"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function(c,l,a,r,i,t,y){
-                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-              })(window, document, "clarity", "script", "YOUR_PROJECT_ID");
-            `,
-          }}
-        /> */}
       </body>
     </html>
   )

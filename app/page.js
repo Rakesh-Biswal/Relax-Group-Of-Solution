@@ -36,7 +36,7 @@ export default function HomePage() {
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "https://packers.relax.com"
+                "item": "https://packers.relaxgroup.in"
               }
             ]
           }),
