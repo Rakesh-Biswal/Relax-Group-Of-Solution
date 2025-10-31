@@ -251,7 +251,7 @@ export default function ServiceBoxes() {
               className={`text-sm font-semibold text-amber-800 mb-2 text-center uppercase tracking-wider drop-shadow-sm transition-all duration-700 ${featureVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"
                 }`}
             >
-              🚀 New Smart Feature
+              🚀 Get Upto 30% off
             </h3>
 
             <div
@@ -264,10 +264,10 @@ export default function ServiceBoxes() {
               </p>
 
               <button
-                onClick={() => router.push("/dashboard/pricing")}
+                onClick={() => router.push("/pricing")}
                 className="px-5 py-[6px] text-sm font-semibold text-white bg-gradient-to-r from-amber-600 to-amber-500 rounded-lg shadow-md hover:shadow-[0_4px_12px_rgba(255,193,7,0.4)] hover:scale-105 active:scale-95 transition-all duration-300"
               >
-                CheckOut
+                Check Quote
               </button>
             </div>
           </div>

@@ -48,10 +48,10 @@ export default function HomePage() {
         <ServiceBoxes />
         <ContactForm />
         <HeroAnimated />
+        <TrackingShowcase />
         <FeaturesGrid />
         <BlogRow />
         <Partners />
-        <TrackingShowcase />
         <StatsCounters />
         <Testimonials />
         <Footer />

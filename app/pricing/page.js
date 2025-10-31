@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Truck, MapPin, Calculator, ArrowRight, Sparkles, Shield, Clock, Star, Check, Navigation, Fuel, Users, ArrowLeft, RotateCcw } from "lucide-react"
+import Header from '@/components/Header' // Adjust import path as needed
+import Footer from '@/components/Footer' // Adjust import path as needed
 
 // Vehicle data with pricing per 100km
 const vehicleData = [
@@ -91,26 +93,28 @@ export default function PricingCalculator() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-            {/* Header Section */}
-            <section className="container md:py-24">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-1">
+            {/* Header Component */}
+            <Header />
 
-
+            {/* Main Content */}
+            <section className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
-
+                    {/* Page Header */}
+                    
 
                     {/* Calculator Form */}
                     <AnimatePresence mode="wait">
                         {!showResult ? (
                             <motion.div
                                 key="form"
-                                className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8"
+                                className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 md:p-8"
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -30 }}
                                 transition={{ duration: 0.6 }}
                             >
-                                <div className="flex items-center gap-3 mb-8">
+                                <div className="flex items-center gap-3 mb-6">
                                     <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
                                         <Calculator className="text-white" size={24} />
                                     </div>
@@ -179,7 +183,7 @@ export default function PricingCalculator() {
                                     </div>
 
                                     {/* Location Inputs */}
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 mb-2">
                                                 <MapPin size={16} className="inline mr-2" />
@@ -233,7 +237,7 @@ export default function PricingCalculator() {
                         ) : (
                             <motion.div
                                 key="result"
-                                className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8"
+                                className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 md:p-8"
                                 initial={{ opacity: 0, y: 30 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -30 }}
@@ -317,7 +321,7 @@ export default function PricingCalculator() {
                                         <Check size={20} className="text-green-600" />
                                         Complete Service Package Included
                                     </h4>
-                                    <div className="grid grid-cols-2 gap-3 text-sm">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                                         <div className="flex items-center gap-2">
                                             <Check size={16} className="text-green-500" />
                                             <span>Professional Packing</span>
@@ -362,7 +366,7 @@ export default function PricingCalculator() {
                                 )}
 
                                 {/* Action Buttons */}
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <motion.button
                                         onClick={handleReset}
                                         className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-4 rounded-xl transition-all duration-300"
@@ -381,16 +385,15 @@ export default function PricingCalculator() {
                                             onClick={() => {
                                                 const phone = "919777012315"; // Relax Packers & Movers WhatsApp number (with country code)
                                                 const message = encodeURIComponent(
-                                                    "Hello Relax Packers & Movers ,\nI’m interested in your shifting/relocation service. Please share the quotation and process details."
+                                                    "Hello Relax Packers & Movers ,\nI'm interested in your shifting/relocation service. Please share the quotation and process details."
                                                 );
                                                 window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
                                             }}
-                                            className="flex items-center justify-center gap-2 cursor-pointer bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl shadow-md transition-all duration-300"
+                                            className="flex items-center justify-center gap-2 cursor-pointer"
                                         >
                                             <Truck size={20} />
                                             Book Now
                                         </div>
-
                                     </motion.button>
                                 </div>
                             </motion.div>
@@ -407,7 +410,7 @@ export default function PricingCalculator() {
                                 exit={{ opacity: 0 }}
                             >
                                 <motion.div
-                                    className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-8 max-w-md w-full mx-4"
+                                    className="bg-white rounded-3xl shadow-2xl border border-gray-100 p-6 md:p-8 max-w-md w-full mx-4"
                                     initial={{ scale: 0.9, y: 20 }}
                                     animate={{ scale: 1, y: 0 }}
                                     exit={{ scale: 0.9, y: -20 }}
@@ -461,6 +464,10 @@ export default function PricingCalculator() {
                     </AnimatePresence>
                 </div>
             </section>
+
+            {/* Footer Component */}
+            <Footer />
+
         </div>
     )
 }

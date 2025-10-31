@@ -727,27 +727,6 @@ export default function ChatForm() {
         </AnimatePresence>
       </motion.div>
 
-      {/* Contact Information */}
-      <motion.div
-        className="text-center mt-12 md:mt-16"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8, duration: 0.8 }}
-      >
-        <p className="text-gray-600 mb-4">
-          {isOdia ? "ସିଧାସଳଖ କଥା ହେବାକୁ ପସନ୍ଦ କରନ୍ତି?" : "Prefer to talk directly?"}
-        </p>
-        <div className="flex flex-wrap justify-center gap-6">
-          <a
-            href="tel:+919777012315"
-            className="flex items-center gap-2 bg-white px-6 py-3 rounded-2xl shadow-md border border-gray-100 cursor-pointer"
-          >
-            <Phone size={20} className="text-blue-600" />
-            <span className="font-semibold text-gray-800">+91 97770 12315</span>
-          </a>
-        </div>
-      </motion.div>
-
       {/* Success Popup */}
       {showPopup && <SuccessPopup onClose={() => setShowPopup(false)} />}
 
