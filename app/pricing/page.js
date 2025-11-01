@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Truck, MapPin, Calculator, ArrowRight, Sparkles, Shield, Clock, Star, Check, Navigation, RotateCcw, Gift, Tag, ArrowLeft } from "lucide-react"
+import { Truck, MapPin, Calculator, ArrowRight, Sparkles, Shield, Clock, Star, Check, Navigation, RotateCcw, Gift, Tag, ArrowLeft, User, Phone } from "lucide-react"
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import ScratchCard from '@/components/ScratchCard'
@@ -10,7 +10,7 @@ import ScratchCard from '@/components/ScratchCard'
 // Vehicle data with pricing per 100km
 const vehicleData = [
     {
-        size: "12 ft",
+        size: "12-15 ft",
         capacity: "1-2 BHK",
         pricePer100km: 10000,
         description: "Perfect for small apartments",
@@ -18,7 +18,7 @@ const vehicleData = [
         icon: "🚐"
     },
     {
-        size: "18 ft",
+        size: "18-23 ft",
         capacity: "2-3 BHK",
         pricePer100km: 15000,
         description: "Ideal for medium families",
@@ -26,7 +26,7 @@ const vehicleData = [
         icon: "🚚"
     },
     {
-        size: "22 ft",
+        size: "24-28 ft",
         capacity: "3-4 BHK",
         pricePer100km: 19000,
         description: "Great for large families",
@@ -34,7 +34,7 @@ const vehicleData = [
         icon: "🚛"
     },
     {
-        size: "32 ft",
+        size: "Above 32 ft",
         capacity: "Villa/Office",
         pricePer100km: 25000,
         description: "Best for villas & offices",
@@ -48,6 +48,8 @@ export default function PricingCalculator() {
     const [distance, setDistance] = useState("")
     const [fromLocation, setFromLocation] = useState("")
     const [toLocation, setToLocation] = useState("")
+    const [userName, setUserName] = useState("")
+    const [phoneNumber, setPhoneNumber] = useState("")
     const [isCalculating, setIsCalculating] = useState(false)
     const [showResult, setShowResult] = useState(false)
     const [calculatedPrice, setCalculatedPrice] = useState(0)
@@ -121,6 +123,8 @@ export default function PricingCalculator() {
         setDistance("")
         setFromLocation("")
         setToLocation("")
+        setUserName("")
+        setPhoneNumber("")
         setCalculatedPrice(0)
         setDiscountApplied(false)
         setDiscount(0)
@@ -160,9 +164,6 @@ export default function PricingCalculator() {
                         </motion.div>
                     </div>
 
-                    {/* Discount Banner */}
-                    
-
                     {/* Calculator Form */}
                     <AnimatePresence mode="wait">
                         {!showResult ? (
@@ -174,8 +175,37 @@ export default function PricingCalculator() {
                                 exit={{ opacity: 0, y: -30 }}
                                 transition={{ duration: 0.6 }}
                             >
-                                {/* ... existing form code remains exactly the same ... */}
                                 <form onSubmit={handleCalculate} className="space-y-6">
+                                    {/* User Information */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                                <User size={16} className="inline mr-2" />
+                                                Your Name
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={userName}
+                                                onChange={(e) => setUserName(e.target.value)}
+                                                placeholder="Enter your full name"
+                                                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-semibold text-gray-700 mb-2">
+                                                <Phone size={16} className="inline mr-2" />
+                                                Phone Number
+                                            </label>
+                                            <input
+                                                type="tel"
+                                                value={phoneNumber}
+                                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                                placeholder="Enter your phone number"
+                                                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                            />
+                                        </div>
+                                    </div>
+
                                     {/* Vehicle Selection */}
                                     <div>
                                         <label className="block text-sm font-semibold text-gray-700 mb-3">
@@ -302,6 +332,35 @@ export default function PricingCalculator() {
                                     <h2 className="text-3xl font-bold text-gray-800 mb-2">Your Moving Budget</h2>
                                     <p className="text-gray-600">All-inclusive pricing with complete service package</p>
                                 </div>
+
+                                {/* User Information Display */}
+                                {(userName || phoneNumber) && (
+                                    <motion.div
+                                        className="bg-blue-50 border border-blue-200 rounded-2xl p-6 mb-6"
+                                        initial={{ opacity: 0, scale: 0.9 }}
+                                        animate={{ opacity: 1, scale: 1 }}
+                                        transition={{ delay: 0.1 }}
+                                    >
+                                        <h4 className="font-bold text-blue-800 text-lg mb-4 flex items-center gap-2">
+                                            <User size={20} className="text-blue-600" />
+                                            Customer Information
+                                        </h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            {userName && (
+                                                <div>
+                                                    <div className="text-sm text-blue-600 mb-1">Name</div>
+                                                    <div className="font-semibold text-gray-800">{userName}</div>
+                                                </div>
+                                            )}
+                                            {phoneNumber && (
+                                                <div>
+                                                    <div className="text-sm text-blue-600 mb-1">Phone Number</div>
+                                                    <div className="font-semibold text-gray-800">{phoneNumber}</div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </motion.div>
+                                )}
 
                                 {/* Discount Badge */}
                                 {discountApplied && (
@@ -459,7 +518,7 @@ export default function PricingCalculator() {
                                             onClick={() => {
                                                 const phone = "919777012315";
                                                 const message = encodeURIComponent(
-                                                    `Hello Relax Packers & Movers!\nI'm interested in your shifting service.\nDistance: ${distance} KM\nVehicle: ${selectedVehicle.size}\nEstimated Price: ${formatIndianRupees(priceDetails.finalPrice)}\nPlease share the complete quotation.`
+                                                    `Hello Relax Packers & Movers!\n\nI'm interested in your shifting service. Here are my details:\n\n📋 *Customer Information:*\n• Name: ${userName || "Not provided"}\n• Phone: ${phoneNumber || "Not provided"}\n\n🚛 *Moving Details:*\n• Vehicle: ${selectedVehicle.size} (${selectedVehicle.capacity})\n• Distance: ${distance} KM\n• From: ${fromLocation || "Not specified"}\n• To: ${toLocation || "Not specified"}\n\n💰 *Price Estimate:*\n• Base Price: ${formatIndianRupees(priceDetails.basePrice)}\n${discountApplied ? `• Discount: ${discount}% (-${formatIndianRupees(priceDetails.discountAmount)})\n` : ''}• *Final Price: ${formatIndianRupees(priceDetails.finalPrice)}*\n\nPlease share the complete quotation and confirm availability.`
                                                 );
                                                 window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
                                             }}

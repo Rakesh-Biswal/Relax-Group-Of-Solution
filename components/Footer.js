@@ -170,20 +170,50 @@ export default function Footer() {
 
             {/* Branch Offices */}
             <div className="mb-6">
-              <h5 className="text-sm font-semibold text-white mb-3">Our Branches Across Odisha</h5>
+              <h5 className="text-sm font-semibold text-white mb-3">
+                Our Branches Across Odisha
+              </h5>
               <div className="space-y-2">
+                {/* Cuttack */}
                 <div className="flex items-start gap-2 text-sm text-gray-300">
                   <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>📍 Tulsipur, Bijiupatnaik Chhak, Cuttack, Odisha 753008</span>
+                  <a
+                    href="https://share.google/bTbiOIYbTVBuuliw8"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-green-300 transition-colors"
+                  >
+                    📍 Tulsipur, Bijiupatnaik Chhak, Cuttack, Odisha 753008
+                  </a>
                 </div>
+
+                {/* Bhubaneswar */}
                 <div className="flex items-start gap-2 text-sm text-gray-300">
                   <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>📍 6VR9+JF6, Sai Mandir, Tankapani Rd, Laxmi Vihar, Baragarh, Bhubaneswar, Odisha 751002</span>
+                  <a
+                    href="https://share.google/VGUxX1pvIDQhuOyFK"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-green-300 transition-colors"
+                  >
+                    📍 6VR9+JF6, Sai Mandir, Tankapani Rd, Laxmi Vihar, Baragarh, Bhubaneswar, Odisha 751002
+                  </a>
                 </div>
+
+                {/* Dhenkanal */}
                 <div className="flex items-start gap-2 text-sm text-gray-300">
                   <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>📍 Main Road, Dhenkanal, Odisha</span>
+                  <a
+                    href="https://share.google/GnGoirDZpN3VuEjUj"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-green-300 transition-colors"
+                  >
+                    📍 Main Road, Dhenkanal, Odisha
+                  </a>
                 </div>
+
+                {/* Remaining Branches */}
                 <div className="flex items-start gap-2 text-sm text-gray-300">
                   <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
                   <span>📍 Sital Vihar, Angul, Odisha</span>
@@ -202,6 +232,7 @@ export default function Footer() {
                 </div>
               </div>
             </div>
+
 
             {/* Contact Details */}
             <div className="space-y-3">
