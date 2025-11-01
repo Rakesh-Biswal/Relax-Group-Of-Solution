@@ -66,7 +66,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-3">
                 <IndianRupee size={18} className="text-blue-400" />
-                <span className="text-sm text-gray-300">PAN: AABCR1234M</span>
+                <span className="text-sm text-gray-300">PAN: BUQPN8897r</span>
               </div>
             </div>
           </motion.div>
@@ -112,23 +112,30 @@ export default function Footer() {
           >
             <h4 className="text-lg font-semibold mb-6 flex items-center gap-2">
               <MapPin size={18} className="text-red-400" />
-              Service Areas
+              Our Network Across India
             </h4>
             <div className="grid grid-cols-2 gap-4">
               {[
                 "Odisha",
-                "Delhi NCR",
-                "Mumbai",
-                "Bangalore",
-                "Hyderabad",
-                "Chennai",
-                "Kolkata",
-                "Pune",
-                "Ahmedabad",
-                "Jaipur",
-                "Lucknow",
-                "Chandigarh",
-                "Kochi"
+                "Maharashtra",
+                "Delhi",
+                "Karnataka",
+                "Telangana",
+                "Tamil Nadu",
+                "West Bengal",
+                "Gujarat",
+                "Rajasthan",
+                "Uttar Pradesh",
+                "Bihar",
+                "Punjab",
+                "Haryana",
+                "Chhattisgarh",
+                "Andhra Pradesh",
+                "Jharkhand",
+                "Assam",
+                "Goa",
+                "Himachal Pradesh",
+                "Kerala"
               ].map((city, index) => (
                 <div key={index} className="flex items-center gap-2">
                   <span className="w-1 h-1 bg-green-400 rounded-full"></span>
@@ -196,7 +203,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     className="hover:text-green-300 transition-colors"
                   >
-                    📍 6VR9+JF6, Sai Mandir, Tankapani Rd, Laxmi Vihar, Baragarh, Bhubaneswar, Odisha 751002
+                    📍 Sai Mandir, Tankapani Rd, Laxmi Vihar, Baragarh, Bhubaneswar, Odisha 751002
                   </a>
                 </div>
 
@@ -211,6 +218,11 @@ export default function Footer() {
                   >
                     📍 Main Road, Dhenkanal, Odisha
                   </a>
+                </div>
+
+                <div className="flex items-start gap-2 text-sm text-gray-300">
+                  <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>📍 Shanti Nagar, Jagdalpur, Chhattisgarh</span>
                 </div>
 
                 {/* Remaining Branches */}

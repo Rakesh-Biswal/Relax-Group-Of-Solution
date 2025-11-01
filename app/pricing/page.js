@@ -10,7 +10,7 @@ import ScratchCard from '@/components/ScratchCard'
 // Vehicle data with pricing per 100km
 const vehicleData = [
     {
-        size: "12-15 ft",
+        size: "14-17 ft",
         capacity: "1-2 BHK",
         pricePer100km: 10000,
         description: "Perfect for small apartments",
@@ -18,7 +18,7 @@ const vehicleData = [
         icon: "🚐"
     },
     {
-        size: "18-23 ft",
+        size: "18-20 ft",
         capacity: "2-3 BHK",
         pricePer100km: 15000,
         description: "Ideal for medium families",
@@ -26,7 +26,7 @@ const vehicleData = [
         icon: "🚚"
     },
     {
-        size: "24-28 ft",
+        size: "22-24 ft",
         capacity: "3-4 BHK",
         pricePer100km: 19000,
         description: "Great for large families",
@@ -34,7 +34,7 @@ const vehicleData = [
         icon: "🚛"
     },
     {
-        size: "Above 32 ft",
+        size: "32 ft",
         capacity: "Villa/Office",
         pricePer100km: 25000,
         description: "Best for villas & offices",
@@ -268,7 +268,7 @@ export default function PricingCalculator() {
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 mb-2">
                                                 <MapPin size={16} className="inline mr-2" />
-                                                Moving From (Optional)
+                                                Moving From
                                             </label>
                                             <input
                                                 type="text"
@@ -281,7 +281,7 @@ export default function PricingCalculator() {
                                         <div>
                                             <label className="block text-sm font-semibold text-gray-700 mb-2">
                                                 <MapPin size={16} className="inline mr-2" />
-                                                Moving To (Optional)
+                                                Moving To
                                             </label>
                                             <input
                                                 type="text"
