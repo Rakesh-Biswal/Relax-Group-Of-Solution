@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Image from "next/image"
 import { MapPin, ChevronDown, Menu, X } from "lucide-react"
+import { Home, DollarSign, Info, FileText, Award, Map, Users, MessageSquare } from "lucide-react";
 import IntroAnimation from './ui/IntroAnimation'
 import Link from 'next/link'
 
@@ -12,16 +13,15 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
 
   const menuItems = [
-    { label: "Home", href: "/" },
-    { label: "Our Pricing", href: "/pricing" },
-    { label: "About Us", href: "/about" },
-    { label: "Terms & Con..", href: "/terms" },
-    { label: "Achievements", href: "/achievement" },
-    { label: "Live Tracking", href: "/tracking" },
-    { label: "Trusted Partners", href: "#partners" },
-    { label: "Feedback", href: "#feedback" },
-    { label: "Footer", href: "#footer" }
-  ]
+    { label: "Home", href: "/", icon: <Home size={18} /> },
+    { label: "Get Free Quote", href: "/pricing", icon: <DollarSign size={18} /> },
+    { label: "About Us", href: "/about", icon: <Info size={18} /> },
+    { label: "Our Achievements", href: "/achievement", icon: <Award size={18} /> },
+    { label: "Live Tracking", href: "/tracking", icon: <Map size={18} /> },
+    { label: "Our Trusted Partners", href: "/partners", icon: <Users size={18} /> },
+    { label: "Feedback", href: "/feedback", icon: <MessageSquare size={18} /> },
+    { label: "Terms & Conditions", href: "/terms", icon: <FileText size={18} /> },
+  ];
 
   // Handle scroll effect for header
   useEffect(() => {
@@ -63,18 +63,17 @@ export default function Header() {
         <IntroAnimation onSkip={() => setShowIntro(false)} />
       )} */}
 
-      <header className={` z-40 transition-all duration-300 ${
-        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white'
-      }`}>
+      <header className={` z-40 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-white'
+        }`}>
         <div className="container pt-3 pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Image 
-                src="/images/relax-nav-logo.png" 
-                width={160} 
-                height={32} 
-                alt="Relax Packers & Movers logo" 
-                priority 
+              <Image
+                src="/images/relax-nav-logo.png"
+                width={160}
+                height={32}
+                alt="Relax Packers & Movers logo"
+                priority
                 className="transition-transform duration-300 hover:scale-105"
               />
             </div>
@@ -85,13 +84,15 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-gray-700 hover:text-[var(--color-accent)] font-medium transition-all duration-300 ease-in-out transform hover:scale-105 relative group"
+                  className="flex items-center gap-2 text-gray-700 hover:text-[var(--color-accent)] font-medium transition-all duration-300 ease-in-out transform hover:scale-105 relative group"
                 >
+                  {item.icon} {/* Icon added here */}
                   {item.label}
                   <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[var(--color-accent)] transition-all duration-300 group-hover:w-full"></span>
                 </Link>
               ))}
             </nav>
+
 
             {/* Mobile Menu Button - Hidden on desktop */}
             <div className="mobile-menu-container md:hidden">
@@ -126,13 +127,13 @@ export default function Header() {
         {/* Mobile Menu Overlay - Absolute positioned */}
         <div className={`
           md:hidden fixed inset-0 z-50 transition-all duration-500 ease-in-out
-          ${isMenuOpen 
-            ? 'opacity-100 visible' 
+          ${isMenuOpen
+            ? 'opacity-100 visible'
             : 'opacity-0 invisible pointer-events-none'
           }
         `}>
           {/* Backdrop */}
-          <div 
+          <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-500"
             onClick={() => setIsMenuOpen(false)}
           />
@@ -140,8 +141,8 @@ export default function Header() {
           {/* Menu Content */}
           <div className={`
             absolute top-24 left-4 right-4 bg-white rounded-3xl shadow-2xl border border-gray-200 transform transition-all duration-500 ease-out
-            ${isMenuOpen 
-              ? 'translate-y-0 opacity-100 scale-100' 
+            ${isMenuOpen
+              ? 'translate-y-0 opacity-100 scale-100'
               : 'translate-y-8 opacity-0 scale-95'
             }
           `}>
@@ -165,27 +166,23 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`
-                    flex items-center gap-3 px-4 py-4 text-gray-700 hover:text-[var(--color-accent)] hover:bg-gray-50 transition-all duration-300 font-medium
-                    ${index !== menuItems.length - 1 ? 'border-b border-gray-100' : ''}
-                    rounded-xl mx-2
-                  `}
+                  className={`flex items-center gap-3 px-4 py-4 text-gray-700 hover:text-[var(--color-accent)] hover:bg-gray-50 transition-all duration-300 font-medium
+        ${index !== menuItems.length - 1 ? 'border-b border-gray-100' : ''} rounded-xl mx-2`}
                   onClick={() => setIsMenuOpen(false)}
-                  style={{
-                    animationDelay: isMenuOpen ? `${index * 50}ms` : '0ms'
-                  }}
+                  style={{ animationDelay: isMenuOpen ? `${index * 50}ms` : '0ms' }}
                 >
-                  <div className="w-2 h-2 bg-[var(--color-accent)] rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                  <div>{item.icon}</div> {/* Icon added here */}
                   <span className="font-semibold text-[15px]">{item.label}</span>
                 </Link>
               ))}
             </nav>
 
+
             {/* Menu Footer */}
             <div className="p-6 border-t border-gray-100 bg-gray-50 rounded-b-3xl">
               <div className="text-center">
                 <p className="text-sm text-gray-600 mb-3">Need immediate assistance?</p>
-                <a 
+                <a
                   href="tel:+919777012315"
                   className="inline-flex items-center gap-2 bg-[var(--color-accent)] text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:bg-[var(--color-accent-dark)] shadow-lg hover:shadow-xl"
                 >
@@ -198,7 +195,7 @@ export default function Header() {
         </div>
       </header>
 
-      
+
     </>
   )
 }

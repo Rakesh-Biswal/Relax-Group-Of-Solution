@@ -1,18 +1,18 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { 
-  Truck, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Clock, 
-  Shield, 
-  Award, 
-  Users, 
-  Facebook, 
-  Twitter, 
-  Instagram, 
+import {
+  Truck,
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Shield,
+  Award,
+  Users,
+  Facebook,
+  Twitter,
+  Instagram,
   Linkedin,
   ArrowRight,
   IndianRupee
@@ -48,9 +48,9 @@ export default function Footer() {
               </div>
               <h3 className="text-2xl font-bold">Relax Packers</h3>
             </div>
-            
+
             <p className="text-gray-300 mb-6 leading-relaxed">
-              Your trusted partner for stress-free packing and moving services across India. 
+              Your trusted partner for stress-free packing and moving services across India.
               Professional, reliable, and insured moving solutions since 2012.
             </p>
 
@@ -154,14 +154,14 @@ export default function Footer() {
               <Phone size={18} className="text-green-400" />
               Contact Info
             </h4>
-            
+
             {/* Head Office */}
             <div className="mb-6">
               <h5 className="text-sm font-semibold text-white mb-2">Head Office</h5>
               <div className="flex items-start gap-3 mb-3">
                 <MapPin size={16} className="text-red-400 mt-1 flex-shrink-0" />
                 <p className="text-sm text-gray-300">
-                   TANGARHUDA, SATINAGAR,<br />
+                  TANGARHUDA, SATINAGAR,<br />
                   KHATA NO- 313/143 PLOT NO- 945/1260, PO-MARKAT NAGAR,<br />
                   PS- BIDANASI, Cuttack, Cuttack, Odisha, 753014
                 </p>
@@ -170,10 +170,37 @@ export default function Footer() {
 
             {/* Branch Offices */}
             <div className="mb-6">
-              <h5 className="text-sm font-semibold text-white mb-2">Branch Offices</h5>
-              <p className="text-sm text-gray-300 mb-2">
-                📍 Tulashipur Cuttack • Deulasahi Dhenkanal • Angul • Kanpur • Balasore
-              </p>
+              <h5 className="text-sm font-semibold text-white mb-3">Our Branches Across Odisha</h5>
+              <div className="space-y-2">
+                <div className="flex items-start gap-2 text-sm text-gray-300">
+                  <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>📍 Tulsipur, Bijiupatnaik Chhak, Cuttack, Odisha 753008</span>
+                </div>
+                <div className="flex items-start gap-2 text-sm text-gray-300">
+                  <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>📍 6VR9+JF6, Sai Mandir, Tankapani Rd, Laxmi Vihar, Baragarh, Bhubaneswar, Odisha 751002</span>
+                </div>
+                <div className="flex items-start gap-2 text-sm text-gray-300">
+                  <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>📍 Main Road, Dhenkanal, Odisha</span>
+                </div>
+                <div className="flex items-start gap-2 text-sm text-gray-300">
+                  <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>📍 Sital Vihar, Angul, Odisha</span>
+                </div>
+                <div className="flex items-start gap-2 text-sm text-gray-300">
+                  <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>📍 Matha Sai, Balasore, Odisha</span>
+                </div>
+                <div className="flex items-start gap-2 text-sm text-gray-300">
+                  <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>📍 Brahmanipali, Balangir, Odisha</span>
+                </div>
+                <div className="flex items-start gap-2 text-sm text-gray-300">
+                  <MapPin size={14} className="text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>📍 Similiguda, Koraput, Odisha</span>
+                </div>
+              </div>
             </div>
 
             {/* Contact Details */}
@@ -268,7 +295,7 @@ export default function Footer() {
                 © {currentYear} Relax Packers & Movers. All rights reserved.
               </p>
             </div>
-            
+
             <div className="flex flex-wrap justify-center gap-6">
               <a href="#" className="text-sm text-gray-400 hover:text-white transition-colors duration-200">
                 Privacy Policy

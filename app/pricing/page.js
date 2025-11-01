@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Truck, MapPin, Calculator, ArrowRight, Sparkles, Shield, Clock, Star, Check, Navigation, Fuel, Users, ArrowLeft, RotateCcw } from "lucide-react"
-import Header from '@/components/Header' // Adjust import path as needed
-import Footer from '@/components/Footer' // Adjust import path as needed
+import { Truck, MapPin, Calculator, ArrowRight, Sparkles, Shield, Clock, Star, Check, Navigation, RotateCcw, Gift, Tag, ArrowLeft } from "lucide-react"
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+import ScratchCard from '@/components/ScratchCard'
 
 // Vehicle data with pricing per 100km
 const vehicleData = [
@@ -51,11 +52,29 @@ export default function PricingCalculator() {
     const [showResult, setShowResult] = useState(false)
     const [calculatedPrice, setCalculatedPrice] = useState(0)
     const [routeAnimation, setRouteAnimation] = useState(false)
+    const [showScratchCard, setShowScratchCard] = useState(false)
+    const [discount, setDiscount] = useState(0)
+    const [discountApplied, setDiscountApplied] = useState(false)
+
+    const calculateDiscount = (km) => {
+        if (km > 300) return 30
+        if (km > 200) return 20
+        if (km > 100) return 10
+        return 0
+    }
 
     const calculatePrice = () => {
         const km = parseInt(distance) || 0
         const pricePerKm = selectedVehicle.pricePer100km / 100
-        return Math.round(pricePerKm * km)
+        const basePrice = Math.round(pricePerKm * km)
+        const discountRate = discountApplied ? calculateDiscount(km) : 0
+        const discountAmount = Math.round((basePrice * discountRate) / 100)
+        return {
+            basePrice,
+            discountRate,
+            discountAmount,
+            finalPrice: basePrice - discountAmount
+        }
     }
 
     const handleCalculate = (e) => {
@@ -65,15 +84,36 @@ export default function PricingCalculator() {
         setIsCalculating(true)
         setShowResult(false)
         setRouteAnimation(true)
+        setDiscountApplied(false)
+
+        const km = parseInt(distance)
+        const potentialDiscount = calculateDiscount(km)
 
         // Simulate calculation and API call
         setTimeout(() => {
-            const price = calculatePrice()
-            setCalculatedPrice(price)
-            setIsCalculating(false)
-            setShowResult(true)
+            const priceDetails = calculatePrice()
+            setCalculatedPrice(priceDetails.finalPrice)
+            
+            if (potentialDiscount > 0 && !discountApplied) {
+                setDiscount(potentialDiscount)
+                setShowScratchCard(true)
+            } else {
+                setIsCalculating(false)
+                setShowResult(true)
+            }
             setRouteAnimation(false)
         }, 2000)
+    }
+
+    const handleScratchReveal = () => {
+        setDiscountApplied(true)
+        const priceDetails = calculatePrice()
+        setCalculatedPrice(priceDetails.finalPrice)
+        setShowScratchCard(false)
+        setTimeout(() => {
+            setIsCalculating(false)
+            setShowResult(true)
+        }, 500)
     }
 
     const handleReset = () => {
@@ -82,6 +122,8 @@ export default function PricingCalculator() {
         setFromLocation("")
         setToLocation("")
         setCalculatedPrice(0)
+        setDiscountApplied(false)
+        setDiscount(0)
     }
 
     const formatIndianRupees = (amount) => {
@@ -92,8 +134,10 @@ export default function PricingCalculator() {
         }).format(amount)
     }
 
+    const priceDetails = calculatePrice()
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-1">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
             {/* Header Component */}
             <Header />
 
@@ -101,6 +145,22 @@ export default function PricingCalculator() {
             <section className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     {/* Page Header */}
+                    <div className="text-center mb-8">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                        >
+                            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                                Pricing Calculator
+                            </h1>
+                            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                                Get an instant estimate for your moving costs with exclusive distance-based discounts!
+                            </p>
+                        </motion.div>
+                    </div>
+
+                    {/* Discount Banner */}
                     
 
                     {/* Calculator Form */}
@@ -114,16 +174,7 @@ export default function PricingCalculator() {
                                 exit={{ opacity: 0, y: -30 }}
                                 transition={{ duration: 0.6 }}
                             >
-                                <div className="flex items-center gap-3 mb-6">
-                                    <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
-                                        <Calculator className="text-white" size={24} />
-                                    </div>
-                                    <div>
-                                        <h2 className="text-2xl font-bold text-gray-800">Calculate Ur Budget</h2>
-                                        <p className="text-gray-600">Powered By Relax Group</p>
-                                    </div>
-                                </div>
-
+                                {/* ... existing form code remains exactly the same ... */}
                                 <form onSubmit={handleCalculate} className="space-y-6">
                                     {/* Vehicle Selection */}
                                     <div>
@@ -178,7 +229,7 @@ export default function PricingCalculator() {
                                             min="1"
                                         />
                                         <p className="text-xs text-gray-500 mt-2">
-                                            💡 Minimum 1km required for calculation
+                                            💡 Enter 100+ KM for automatic discount offers!
                                         </p>
                                     </div>
 
@@ -252,6 +303,23 @@ export default function PricingCalculator() {
                                     <p className="text-gray-600">All-inclusive pricing with complete service package</p>
                                 </div>
 
+                                {/* Discount Badge */}
+                                {discountApplied && (
+                                    <motion.div
+                                        initial={{ scale: 0 }}
+                                        animate={{ scale: 1 }}
+                                        className="bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-2xl p-4 text-center mb-6 shadow-lg"
+                                    >
+                                        <div className="flex items-center justify-center gap-3 mb-2">
+                                            <Tag size={24} />
+                                            <span className="text-xl font-bold">{discount}% Discount Applied!</span>
+                                        </div>
+                                        <p className="text-green-100">
+                                            You saved {formatIndianRupees(priceDetails.discountAmount)} on your move!
+                                        </p>
+                                    </motion.div>
+                                )}
+
                                 {/* Route Visualization */}
                                 {(fromLocation || toLocation) && (
                                     <motion.div
@@ -285,12 +353,34 @@ export default function PricingCalculator() {
                                     </motion.div>
                                 )}
 
-                                {/* Price Display */}
-                                <div className="text-center mb-8">
-                                    <div className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-                                        {formatIndianRupees(calculatedPrice)}
+                                {/* Price Breakdown */}
+                                <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6 mb-6">
+                                    <h4 className="font-bold text-gray-800 text-lg mb-4 text-center">Price Breakdown</h4>
+                                    
+                                    <div className="space-y-3">
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-gray-600">Base Price:</span>
+                                            <span className="font-semibold">{formatIndianRupees(priceDetails.basePrice)}</span>
+                                        </div>
+                                        
+                                        {discountApplied && (
+                                            <motion.div
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                className="flex justify-between items-center text-green-600"
+                                            >
+                                                <span>Discount ({discount}%):</span>
+                                                <span className="font-bold">-{formatIndianRupees(priceDetails.discountAmount)}</span>
+                                            </motion.div>
+                                        )}
+                                        
+                                        <div className="border-t border-gray-300 pt-3 flex justify-between items-center">
+                                            <span className="text-lg font-bold text-gray-800">Final Price:</span>
+                                            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                                                {formatIndianRupees(priceDetails.finalPrice)}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <p className="text-gray-600 text-lg">Total Estimated Cost</p>
                                 </div>
 
                                 {/* Vehicle Info */}
@@ -349,22 +439,6 @@ export default function PricingCalculator() {
                                     </div>
                                 </div>
 
-                                {/* Important Notes */}
-                                {parseInt(distance) < 100 && (
-                                    <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mb-6">
-                                        <div className="flex items-start gap-3">
-                                            <Shield size={20} className="text-yellow-600 mt-0.5" />
-                                            <div>
-                                                <h5 className="font-semibold text-yellow-800 mb-2">Important Notice</h5>
-                                                <p className="text-yellow-700 text-sm">
-                                                    For distances under 100km, we recommend contacting our HR manager for exact pricing.
-                                                    The shown amount is an estimate and may vary based on specific requirements and location accessibility.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
                                 {/* Action Buttons */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <motion.button
@@ -374,7 +448,7 @@ export default function PricingCalculator() {
                                         whileTap={{ scale: 0.98 }}
                                     >
                                         <RotateCcw size={20} />
-                                        Reset
+                                        New Calculation
                                     </motion.button>
                                     <motion.button
                                         className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -383,9 +457,9 @@ export default function PricingCalculator() {
                                     >
                                         <div
                                             onClick={() => {
-                                                const phone = "919777012315"; // Relax Packers & Movers WhatsApp number (with country code)
+                                                const phone = "919777012315";
                                                 const message = encodeURIComponent(
-                                                    "Hello Relax Packers & Movers ,\nI'm interested in your shifting/relocation service. Please share the quotation and process details."
+                                                    `Hello Relax Packers & Movers!\nI'm interested in your shifting service.\nDistance: ${distance} KM\nVehicle: ${selectedVehicle.size}\nEstimated Price: ${formatIndianRupees(priceDetails.finalPrice)}\nPlease share the complete quotation.`
                                                 );
                                                 window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
                                             }}
@@ -462,12 +536,22 @@ export default function PricingCalculator() {
                             </motion.div>
                         )}
                     </AnimatePresence>
+
+                    {/* Scratch Card Modal */}
+                    <AnimatePresence>
+                        {showScratchCard && (
+                            <ScratchCard
+                                discount={discount}
+                                onReveal={handleScratchReveal}
+                                onClose={() => setShowScratchCard(false)}
+                            />
+                        )}
+                    </AnimatePresence>
                 </div>
             </section>
 
             {/* Footer Component */}
             <Footer />
-
         </div>
     )
 }

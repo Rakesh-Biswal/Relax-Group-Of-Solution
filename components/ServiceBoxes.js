@@ -267,7 +267,7 @@ export default function ServiceBoxes() {
                 onClick={() => router.push("/pricing")}
                 className="px-5 py-[6px] text-sm font-semibold text-white bg-gradient-to-r from-amber-600 to-amber-500 rounded-lg shadow-md hover:shadow-[0_4px_12px_rgba(255,193,7,0.4)] hover:scale-105 active:scale-95 transition-all duration-300"
               >
-                Check Quote
+                Free Quote
               </button>
             </div>
           </div>

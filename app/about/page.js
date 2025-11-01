@@ -5,6 +5,8 @@ import { motion, useInView } from "framer-motion"
 import { useRef } from "react"
 import { Shield, Clock, Users, Award, Star, MapPin, Phone, Heart, Target, Globe, Calculator, ArrowLeft, CheckCircle } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
+import BranchExplorer from "@/components/BranchExplorer"
 
 // Animation component
 const AnimatedSection = ({ children, className = "", delay = 0 }) => {
@@ -128,9 +130,7 @@ export default function AboutUs() {
 
   const teamMembers = [
     { name: "Badal Behera", role: "Founder & CEO" },
-    { name: "Rakesh Biswal", role: "Tech & Marketing Lead" },
-    { name: "Amit Patel", role: "Operations Head" },
-    { name: "Sneha Reddy", role: "Customer Success Manager" }
+    { name: "Rakesh Biswal", role: "Developer & Marketing Lead" },
   ]
 
   const milestones = [
@@ -181,7 +181,7 @@ export default function AboutUs() {
                     World Safely
                   </span>
                 </h1>
-                
+
                 <p className="text-lg sm:text-xl md:text-2xl text-slate-600 mb-8 lg:mb-10 leading-relaxed font-light max-w-2xl">
                   Professional packers and movers dedicated to making your relocation experience seamless, secure, and stress-free across India.
                 </p>
@@ -208,20 +208,19 @@ export default function AboutUs() {
               </div>
             </AnimatedSection>
 
+            {/* Company Logo/Image Section */}
             <AnimatedSection delay={0.4} className="relative">
               <motion.div
                 className="relative rounded-[2.5rem] overflow-hidden shadow-2xl mx-auto max-w-2xl"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.4 }}
               >
-                {/* Main Image Container */}
                 <div className="w-full aspect-square max-h-[500px] bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-700 rounded-[2.5rem] flex items-center justify-center relative overflow-hidden">
-                  {/* Animated Background Elements */}
                   <div className="absolute inset-0 opacity-20">
                     <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full blur-xl"></div>
                     <div className="absolute bottom-10 right-10 w-40 h-40 bg-blue-300 rounded-full blur-2xl"></div>
                   </div>
-                  
+
                   <div className="text-white text-center relative z-10 p-8">
                     <motion.div
                       className="w-32 h-32 mx-auto mb-6 relative"
@@ -229,7 +228,6 @@ export default function AboutUs() {
                       animate={{ scale: 1 }}
                       transition={{ duration: 0.8, delay: 0.8 }}
                     >
-                      {/* Replace with your actual logo - recommended size 128x128 pixels */}
                       <div className="w-full h-full bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-sm border border-white/30">
                         <div className="text-center">
                           <div className="text-2xl font-bold text-white mb-1">Relax</div>
@@ -255,7 +253,7 @@ export default function AboutUs() {
                     </motion.p>
                   </div>
                 </div>
-                
+
                 {/* Floating Cards */}
                 <motion.div
                   className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-2xl p-4"
@@ -270,7 +268,7 @@ export default function AboutUs() {
                     </div>
                   </div>
                 </motion.div>
-                
+
                 <motion.div
                   className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-2xl p-4"
                   animate={{ y: [0, 12, 0] }}
@@ -287,6 +285,21 @@ export default function AboutUs() {
               </motion.div>
             </AnimatedSection>
           </div>
+        </div>
+      </section>
+
+      <section className="py-16 md:py-20 bg-white">
+        <div className="container px-4 sm:px-6 lg:px-8">
+          <AnimatedSection className="text-center mb-12" delay={0.2}>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 mb-6">
+              Our Network Across Odisha
+            </h2>
+            <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto font-light">
+              Explore our extensive network of branches serving every corner of Odisha with reliable packing and moving services
+            </p>
+          </AnimatedSection>
+
+          <BranchExplorer />
         </div>
       </section>
 
@@ -320,16 +333,16 @@ export default function AboutUs() {
                 <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-800 mb-6 lg:mb-8">
                   Our <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Journey</span>
                 </h2>
-                
+
                 <div className="space-y-4 sm:space-y-6 text-slate-600 text-base sm:text-lg leading-relaxed">
                   <p className="text-lg sm:text-xl text-slate-700 font-light">
                     Founded in 2010 with a vision to transform the relocation industry in India, Relax Packers & Movers has grown from a local service provider to a trusted national brand.
                   </p>
-                  
+
                   <p>
                     Our founder, <strong>Badal Behera</strong>, recognized the stress and challenges families face during relocation. He envisioned a service that not only moves belongings but also transports peace of mind.
                   </p>
-                  
+
                   <p>
                     Under the technical leadership of <strong>Rakesh Biswal</strong>, we've integrated cutting-edge technology to provide real-time tracking, instant quotes, and seamless customer experiences.
                   </p>
@@ -500,7 +513,7 @@ export default function AboutUs() {
             <p className="text-lg sm:text-xl text-slate-300 mb-8 sm:mb-12 max-w-2xl mx-auto font-light">
               Join thousands of satisfied families who trust Relax Packers & Movers for their relocation journey.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6">
               <motion.a
                 href="tel:+919777012315"
@@ -511,9 +524,9 @@ export default function AboutUs() {
                 <Phone size={20} className="group-hover:scale-110 transition-transform duration-300" />
                 <span className="text-base sm:text-lg">Call: +91 97770 12315</span>
               </motion.a>
-              
+
               <motion.a
-                href="/dashboard/pricing"
+                href="/pricing"
                 className="flex items-center justify-center gap-3 sm:gap-4 bg-white text-slate-800 px-6 sm:px-10 py-4 sm:py-5 rounded-2xl font-bold shadow-2xl hover:shadow-3xl transition-all duration-300 group"
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.98 }}
