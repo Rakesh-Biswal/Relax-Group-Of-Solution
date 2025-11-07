@@ -183,10 +183,6 @@ export default function BlogPage() {
         return () => clearInterval(interval)
     }, [autoPlay, isModalOpen, currentIndex])
 
-    const handleImageLoad = (id) => {
-        setImageLoad(prev => ({ ...prev, [id]: true }))
-    }
-
     const formatDate = (dateString) => {
         return new Date(dateString).toLocaleDateString('en-US', {
             weekday: 'long',
@@ -330,7 +326,7 @@ export default function BlogPage() {
                                     <img
                                         src={operation.image}
                                         alt={operation.title}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                     />
 
                                     {/* Stage Badge */}
@@ -348,7 +344,6 @@ export default function BlogPage() {
                                         </div>
                                     </motion.div>
                                 </div>
-
 
                                 {/* Content */}
                                 <div className="p-6">
@@ -438,145 +433,173 @@ export default function BlogPage() {
                 </section>
             </main>
 
-            {/* Operation Detail Modal */}
+            {/* Operation Detail Modal - Fixed Version */}
             <AnimatePresence>
                 {isModalOpen && selectedOperation && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+                        className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                         onClick={() => setIsModalOpen(false)}
                     >
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+                            className="bg-white rounded-3xl shadow-2xl max-w-6xl w-full max-h-[95vh] overflow-hidden flex flex-col"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div className="p-8">
-                                {/* Modal Header */}
-                                <div className="flex items-center justify-between mb-6">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`w-16 h-16 bg-gradient-to-r ${operationStages.find(s => s.id === selectedOperation.stage)?.color
-                                            } rounded-2xl flex items-center justify-center`}>
-                                            {React.createElement(operationStages.find(s => s.id === selectedOperation.stage)?.icon, {
-                                                className: "text-white",
-                                                size: 28
-                                            })}
-                                        </div>
-                                        <div>
-                                            <h3 className="text-2xl font-bold text-gray-800">{selectedOperation.title}</h3>
-                                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                                                <MapPin size={14} />
-                                                {selectedOperation.location}
-                                                <span>•</span>
-                                                <Calendar size={14} />
-                                                {formatDate(selectedOperation.date)}
-                                                <span>•</span>
-                                                <Clock size={14} />
-                                                {selectedOperation.time}
-                                            </div>
-                                        </div>
+                            {/* Modal Header */}
+                            <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-white">
+                                <div className="flex items-center gap-4">
+                                    <div className={`w-12 h-12 bg-gradient-to-r ${operationStages.find(s => s.id === selectedOperation.stage)?.color
+                                        } rounded-xl flex items-center justify-center`}>
+                                        {React.createElement(operationStages.find(s => s.id === selectedOperation.stage)?.icon, {
+                                            className: "text-white",
+                                            size: 24
+                                        })}
                                     </div>
-                                    <button
-                                        onClick={() => setIsModalOpen(false)}
-                                        className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-xl"
-                                    >
-                                        <X size={24} />
-                                    </button>
-                                </div>
-
-                                {/* Main Image */}
-                                <div className="relative rounded-2xl overflow-hidden mb-6 bg-gradient-to-br from-blue-400 to-cyan-500 h-80 flex items-center justify-center">
-                                    <div className="text-white text-center">
-                                        <Truck size={64} className="mx-auto mb-4 opacity-90" />
-                                        <p className="text-xl font-semibold">{selectedOperation.title}</p>
-                                        <p className="text-blue-100 mt-2">{selectedOperation.description}</p>
-                                    </div>
-
-                                    {/* Navigation Arrows */}
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); handlePrev(); }}
-                                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300"
-                                    >
-                                        <ChevronLeft size={24} />
-                                    </button>
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); handleNext(); }}
-                                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300"
-                                    >
-                                        <ChevronRight size={24} />
-                                    </button>
-
-                                    {/* Auto-play Control */}
-                                    <button
-                                        onClick={(e) => { e.stopPropagation(); setAutoPlay(!autoPlay); }}
-                                        className="absolute bottom-4 right-4 bg-white/20 backdrop-blur-sm text-white p-3 rounded-full hover:bg-white/30 transition-all duration-300"
-                                    >
-                                        {autoPlay ? <Pause size={20} /> : <Play size={20} />}
-                                    </button>
-                                </div>
-
-                                {/* Operation Details */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                    <div className="space-y-4">
-                                        <div>
-                                            <h4 className="font-bold text-gray-800 mb-2 flex items-center gap-2">
-                                                <Users size={18} className="text-blue-500" />
-                                                Team Members
-                                            </h4>
-                                            <div className="flex flex-wrap gap-2">
-                                                {selectedOperation.team.map((member, index) => (
-                                                    <span
-                                                        key={index}
-                                                        className="bg-blue-50 text-blue-600 px-3 py-2 rounded-xl text-sm font-medium"
-                                                    >
-                                                        {member}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <h4 className="font-bold text-gray-800 mb-2 flex items-center gap-2">
-                                                <Package size={18} className="text-green-500" />
-                                                Tools & Equipment
-                                            </h4>
-                                            <div className="flex flex-wrap gap-2">
-                                                {selectedOperation.tools.map((tool, index) => (
-                                                    <span
-                                                        key={index}
-                                                        className="bg-green-50 text-green-600 px-3 py-2 rounded-xl text-sm font-medium"
-                                                    >
-                                                        {tool}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div className="bg-gray-50 rounded-xl p-4">
-                                            <h4 className="font-bold text-gray-800 mb-2">Operation Duration</h4>
-                                            <p className="text-2xl font-bold text-gray-800">{selectedOperation.duration}</p>
-                                        </div>
-
-                                        <div className="bg-blue-50 rounded-xl p-4">
-                                            <h4 className="font-bold text-gray-800 mb-2">Items Protected</h4>
-                                            <p className="text-lg text-blue-600 font-semibold">{selectedOperation.itemsProtected}</p>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-gray-800">{selectedOperation.title}</h3>
+                                        <div className="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                                            <MapPin size={14} />
+                                            {selectedOperation.location}
+                                            <span>•</span>
+                                            <Calendar size={14} />
+                                            {formatDate(selectedOperation.date)}
                                         </div>
                                     </div>
                                 </div>
+                                <button
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-xl"
+                                >
+                                    <X size={24} />
+                                </button>
+                            </div>
 
-                                {/* Description */}
-                                <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6">
-                                    <h4 className="font-bold text-gray-800 mb-3">Process Description</h4>
-                                    <p className="text-gray-700 leading-relaxed">
-                                        {selectedOperation.description} Our team follows strict protocols to ensure every item is handled with care and precision.
-                                        From initial assessment to final delivery, we maintain the highest standards of safety and efficiency.
-                                    </p>
+                            {/* Main Content Area */}
+                            <div className="flex-1 overflow-auto">
+                                <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
+                                    {/* Image Section */}
+                                    <div className="relative bg-gray-100 min-h-[400px] lg:min-h-[500px]">
+                                        <img
+                                            src={selectedOperation.image}
+                                            alt={selectedOperation.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        
+                                        {/* Navigation Controls */}
+                                        <div className="absolute inset-0 flex items-center justify-between p-4">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); handlePrev(); }}
+                                                className="bg-white/80 hover:bg-white backdrop-blur-sm text-gray-800 p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                                            >
+                                                <ChevronLeft size={24} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                                                className="bg-white/80 hover:bg-white backdrop-blur-sm text-gray-800 p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                                            >
+                                                <ChevronRight size={24} />
+                                            </button>
+                                        </div>
+
+                                        {/* Auto-play Control */}
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setAutoPlay(!autoPlay); }}
+                                            className="absolute bottom-4 right-4 bg-white/80 hover:bg-white backdrop-blur-sm text-gray-800 p-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+                                        >
+                                            {autoPlay ? <Pause size={18} /> : <Play size={18} />}
+                                        </button>
+
+                                        {/* Image Counter */}
+                                        <div className="absolute bottom-4 left-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm backdrop-blur-sm">
+                                            {currentIndex + 1} / {filteredOperations.length}
+                                        </div>
+                                    </div>
+
+                                    {/* Details Section */}
+                                    <div className="p-6 lg:p-8 overflow-y-auto">
+                                        <div className="space-y-6">
+                                            {/* Description */}
+                                            <div>
+                                                <h4 className="font-bold text-gray-800 mb-3 text-lg">Operation Details</h4>
+                                                <p className="text-gray-700 leading-relaxed">
+                                                    {selectedOperation.description}
+                                                </p>
+                                            </div>
+
+                                            {/* Key Information */}
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="bg-blue-50 rounded-xl p-4">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <Clock size={16} className="text-blue-600" />
+                                                        <span className="font-semibold text-gray-800">Duration</span>
+                                                    </div>
+                                                    <p className="text-blue-600 font-bold text-lg">{selectedOperation.duration}</p>
+                                                </div>
+                                                <div className="bg-green-50 rounded-xl p-4">
+                                                    <div className="flex items-center gap-2 mb-2">
+                                                        <Shield size={16} className="text-green-600" />
+                                                        <span className="font-semibold text-gray-800">Items Protected</span>
+                                                    </div>
+                                                    <p className="text-green-600 font-bold text-sm">{selectedOperation.itemsProtected}</p>
+                                                </div>
+                                            </div>
+
+                                            {/* Team Members */}
+                                            <div>
+                                                <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                                    <Users size={18} className="text-blue-500" />
+                                                    Team Members
+                                                </h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {selectedOperation.team.map((member, index) => (
+                                                        <span
+                                                            key={index}
+                                                            className="bg-blue-50 text-blue-600 px-3 py-2 rounded-xl text-sm font-medium"
+                                                        >
+                                                            {member}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Tools & Equipment */}
+                                            <div>
+                                                <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                                                    <Package size={18} className="text-green-500" />
+                                                    Tools & Equipment Used
+                                                </h4>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {selectedOperation.tools.map((tool, index) => (
+                                                        <span
+                                                            key={index}
+                                                            className="bg-green-50 text-green-600 px-3 py-2 rounded-xl text-sm font-medium"
+                                                        >
+                                                            {tool}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Time & Location */}
+                                            <div className="bg-gray-50 rounded-xl p-4">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                                                    <div className="flex items-center gap-2">
+                                                        <Clock size={16} className="text-gray-600" />
+                                                        <span className="text-gray-700">{selectedOperation.time}</span>
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        <MapPin size={16} className="text-gray-600" />
+                                                        <span className="text-gray-700">{selectedOperation.location}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>
