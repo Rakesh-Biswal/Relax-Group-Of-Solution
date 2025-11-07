@@ -26,23 +26,23 @@ export const metadata = {
   description: "India's most trusted Odia-owned packers and movers service. Professional home relocation, office shifting & courier services in Odisha & pan-India. Real-time tracking, insurance coverage, 24/7 support. ଓଡିଶାର ବିଶ୍ୱସ୍ତ ପ୍ୟାକର୍ସ ଆଣ୍ଡ ମୁଭର୍ସ ସେବା |",
   keywords: [
     // English Keywords
-    "packers and movers", "moving company", "relocation services", "home shifting", 
+    "packers and movers", "moving company", "relocation services", "home shifting",
     "office relocation", "courier services", "professional movers", "packing services",
     "intercity moving", "local movers", "household shifting", "goods transportation",
     "logistics services", "moving solutions", "Relax Packers", "Relax Group",
-    
+
     // Odia/Local Keywords
     "packers and movers in odisha", "packers and movers cuttack", "packers and movers bhubaneswar",
-    "packers and movers in odia", "ପ୍ୟାକର୍ସ ଆଣ୍ଡ ମୁଭର୍ସ", "ଘର ବଦଳ", "ଅଫିସ୍ ବଦଳ", 
+    "packers and movers in odia", "ପ୍ୟାକର୍ସ ଆଣ୍ଡ ମୁଭର୍ସ", "ଘର ବଦଳ", "ଅଫିସ୍ ବଦଳ",
     "ସମାନ ବହନ", "ଟ୍ରାକିଂ ସେବା", "ରିଲାକ୍ସ ପ୍ୟାକର୍ସ", "ଓଡିଶା ପ୍ୟାକର୍ସ",
     "best packers in odisha", "odia packers and movers", "reliable movers odisha",
-    
+
     // Additional SEO Keywords
     "affordable packers and movers", "insured moving services", "house shifting services",
     "commercial relocation", "packers and movers near me", "goods transport services",
     "packing and moving company", "professional relocation services", "safe moving services"
   ].join(", "),
-  
+
   generator: "Next.js",
   applicationName: SITE_NAME,
   referrer: "origin-when-cross-origin",
@@ -156,7 +156,7 @@ export default function RootLayout({ children }) {
       <head>
         {/* Character Encoding */}
         <meta charSet="utf-8" />
-        
+
         {/* Preload critical resources */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -179,7 +179,7 @@ export default function RootLayout({ children }) {
         <meta name="geo.placename" content="Cuttack, Odisha, India" />
         <meta name="geo.position" content="20.4625;85.8828" />
         <meta name="ICBM" content="20.4625, 85.8828" />
-        
+
         {/* Local Business Keywords */}
         <meta name="location" content="Cuttack, Odisha, India" />
         <meta name="town" content="Cuttack" />
@@ -237,16 +237,29 @@ export default function RootLayout({ children }) {
         <meta name="HandheldFriendly" content="true" />
         <meta name="MobileOptimized" content="width" />
         <meta name="apple-mobile-web-app-title" content="Relax Packers" />
+
+        {/* Google Tag (gtag.js) */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17692104354"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'AW-17692104354');
+            `,
+          }}
+        />
       </head>
 
       <body className="bg-background text-foreground font-sans" itemScope itemType="https://schema.org/WebPage">
         {/* Google Tag Manager (noscript) for when JavaScript is disabled */}
         <noscript>
-          <iframe 
+          <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-XXXXXXX"
-            height="0" 
-            width="0" 
-            style={{display: 'none', visibility: 'hidden'}}
+            height="0"
+            width="0"
+            style={{ display: 'none', visibility: 'hidden' }}
           />
         </noscript>
 
@@ -323,7 +336,7 @@ export default function RootLayout({ children }) {
                     name: "Berhampur"
                   },
                   {
-                    "@type": "City", 
+                    "@type": "City",
                     name: "Delhi"
                   },
                   {
@@ -337,7 +350,7 @@ export default function RootLayout({ children }) {
                 ],
                 knowsAbout: [
                   "Household Relocation",
-                  "Office Shifting", 
+                  "Office Shifting",
                   "Packing Services",
                   "Goods Transportation",
                   "Courier Services",
@@ -390,7 +403,7 @@ export default function RootLayout({ children }) {
                       }
                     },
                     {
-                      "@type": "Offer", 
+                      "@type": "Offer",
                       itemOffered: {
                         "@type": "Service",
                         name: "Office Shifting"
@@ -399,7 +412,7 @@ export default function RootLayout({ children }) {
                     {
                       "@type": "Offer",
                       itemOffered: {
-                        "@type": "Service", 
+                        "@type": "Service",
                         name: "Courier Services"
                       }
                     }
@@ -459,7 +472,7 @@ export default function RootLayout({ children }) {
                   }
                 },
                 {
-                  "@type": "Question", 
+                  "@type": "Question",
                   "name": "Are your services insured?",
                   "acceptedAnswer": {
                     "@type": "Answer",
@@ -470,7 +483,7 @@ export default function RootLayout({ children }) {
                   "@type": "Question",
                   "name": "Do you provide Odia-speaking staff?",
                   "acceptedAnswer": {
-                    "@type": "Answer", 
+                    "@type": "Answer",
                     "text": "Yes, we have Odia-speaking customer support and moving staff to ensure clear communication and better service experience. ହଁ, ଆମର ଓଡିଆ କଥା କହିବା ସହାୟକ ଦଳ ଅଛି |"
                   }
                 },
