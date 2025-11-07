@@ -9,6 +9,22 @@ export default function ScratchCard({ discount, onReveal, onClose }) {
   const [isScratching, setIsScratching] = useState(false)
   const canvasRef = useRef(null)
   const containerRef = useRef(null)
+  const [canvasSize, setCanvasSize] = useState({ width: 300, height: 200 })
+
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      if (containerRef.current) {
+        const containerWidth = containerRef.current.offsetWidth - 48 // accounting for padding
+        const height = Math.min(200, containerWidth * 0.66)
+        setCanvasSize({ width: containerWidth, height })
+      }
+    }
+
+    updateCanvasSize()
+    window.addEventListener('resize', updateCanvasSize)
+    
+    return () => window.removeEventListener('resize', updateCanvasSize)
+  }, [])
 
   useEffect(() => {
     if (!canvasRef.current) return
@@ -16,47 +32,81 @@ export default function ScratchCard({ discount, onReveal, onClose }) {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
     
-    // Set canvas size
-    canvas.width = canvas.offsetWidth
-    canvas.height = canvas.offsetHeight
+    // Set canvas size with high DPI for better rendering
+    const dpr = window.devicePixelRatio || 1
+    canvas.width = canvasSize.width * dpr
+    canvas.height = canvasSize.height * dpr
+    canvas.style.width = `${canvasSize.width}px`
+    canvas.style.height = `${canvasSize.height}px`
+    ctx.scale(dpr, dpr)
 
     // Draw scratchable layer
     ctx.fillStyle = '#8B5CF6'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillRect(0, 0, canvasSize.width, canvasSize.height)
     
     // Draw pattern
     ctx.fillStyle = '#7C3AED'
-    for (let i = 0; i < canvas.width; i += 20) {
-      for (let j = 0; j < canvas.height; j += 20) {
-        ctx.fillRect(i, j, 10, 10)
+    const patternSize = Math.max(15, canvasSize.width / 20)
+    for (let i = 0; i < canvasSize.width; i += patternSize) {
+      for (let j = 0; j < canvasSize.height; j += patternSize) {
+        ctx.fillRect(i, j, patternSize / 2, patternSize / 2)
       }
     }
 
     // Draw text
     ctx.fillStyle = '#FFFFFF'
-    ctx.font = 'bold 24px Arial'
+    const fontSize = Math.max(16, canvasSize.width / 15)
+    ctx.font = `bold ${fontSize}px Arial`
     ctx.textAlign = 'center'
-    ctx.fillText('SCRATCH HERE', canvas.width / 2, canvas.height / 2 - 10)
+    ctx.fillText('SCRATCH HERE', canvasSize.width / 2, canvasSize.height / 2 - 10)
     
-    ctx.font = '16px Arial'
-    ctx.fillText('to reveal your offer!', canvas.width / 2, canvas.height / 2 + 20)
-  }, [])
+    ctx.font = `${fontSize * 0.6}px Arial`
+    ctx.fillText('to reveal your offer!', canvasSize.width / 2, canvasSize.height / 2 + 15)
+  }, [canvasSize])
+
+  const getEventPosition = (e) => {
+    const canvas = canvasRef.current
+    const rect = canvas.getBoundingClientRect()
+    
+    let x, y
+    
+    if (e.type.includes('touch')) {
+      // Touch event
+      const touch = e.touches[0] || e.changedTouches[0]
+      x = touch.clientX - rect.left
+      y = touch.clientY - rect.top
+    } else {
+      // Mouse event
+      x = e.clientX - rect.left
+      y = e.clientY - rect.top
+    }
+    
+    return { x, y }
+  }
 
   const handleScratch = (e) => {
     if (isScratched) return
 
+    const { x, y } = getEventPosition(e)
     const canvas = canvasRef.current
-    const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
-
     const ctx = canvas.getContext('2d')
+    
+    // Use a larger brush size for mobile
+    const brushSize = e.type.includes('touch') ? 35 : 25
+    
     ctx.globalCompositeOperation = 'destination-out'
     ctx.beginPath()
-    ctx.arc(x, y, 25, 0, Math.PI * 2)
+    ctx.arc(x, y, brushSize, 0, Math.PI * 2)
     ctx.fill()
 
     // Check if enough area is scratched
+    checkScratchedArea()
+  }
+
+  const checkScratchedArea = () => {
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
     const pixels = imageData.data
     let transparentPixels = 0
@@ -74,12 +124,29 @@ export default function ScratchCard({ discount, onReveal, onClose }) {
     }
   }
 
-  const handleMouseDown = () => {
-    if (!isScratched) setIsScratching(true)
+  const handleMouseDown = (e) => {
+    e.preventDefault()
+    if (!isScratched) {
+      setIsScratching(true)
+      handleScratch(e) // Scratch on initial touch/click
+    }
   }
 
   const handleMouseUp = () => {
     setIsScratching(false)
+  }
+
+  const handleMouseMove = (e) => {
+    if (isScratching && !isScratched) {
+      handleScratch(e)
+    }
+  }
+
+  const handleTouchMove = (e) => {
+    e.preventDefault()
+    if (isScratching && !isScratched) {
+      handleScratch(e)
+    }
   }
 
   return (
@@ -92,7 +159,7 @@ export default function ScratchCard({ discount, onReveal, onClose }) {
     >
       <motion.div
         ref={containerRef}
-        className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden"
+        className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden mx-4"
         initial={{ y: 50 }}
         animate={{ y: 0 }}
         onClick={(e) => e.stopPropagation()}
@@ -101,7 +168,7 @@ export default function ScratchCard({ discount, onReveal, onClose }) {
         <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-6 text-white text-center relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
+            className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors p-1"
           >
             <X size={24} />
           </button>
@@ -120,14 +187,14 @@ export default function ScratchCard({ discount, onReveal, onClose }) {
         {/* Scratch Card */}
         <div className="p-6">
           <div className="relative bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl p-1 mb-4">
-            <div className="bg-white rounded-xl p-6 text-center relative overflow-hidden">
+            <div className="bg-white rounded-xl p-4 text-center relative overflow-hidden">
               {/* Revealed Content */}
               <AnimatePresence>
                 {isScratched && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center flex-col text-white p-4"
+                    className="absolute inset-0 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center flex-col text-white p-4 z-10"
                   >
                     <Sparkles size={48} className="mb-4" />
                     <h4 className="text-2xl font-bold mb-2">You Got {discount}% OFF!</h4>
@@ -141,17 +208,39 @@ export default function ScratchCard({ discount, onReveal, onClose }) {
               </AnimatePresence>
 
               {/* Scratchable Canvas */}
-              <canvas
-                ref={canvasRef}
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
-                onMouseMove={handleScratch}
-                onTouchStart={handleMouseDown}
-                onTouchEnd={handleMouseUp}
-                onTouchMove={handleScratch}
-                className="w-full h-48 rounded-lg cursor-crosshair touch-none"
-                style={{ touchAction: 'none' }}
-              />
+              <div className="relative">
+                <canvas
+                  ref={canvasRef}
+                  onMouseDown={handleMouseDown}
+                  onMouseUp={handleMouseUp}
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseUp}
+                  onTouchStart={handleMouseDown}
+                  onTouchEnd={handleMouseUp}
+                  onTouchMove={handleTouchMove}
+                  onTouchCancel={handleMouseUp}
+                  className="w-full rounded-lg cursor-crosshair touch-none select-none"
+                  style={{ 
+                    height: `${canvasSize.height}px`,
+                    touchAction: 'none',
+                    WebkitUserSelect: 'none',
+                    userSelect: 'none'
+                  }}
+                />
+                
+                {/* Instructions Overlay */}
+                {!isScratched && (
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <motion.div
+                      animate={{ opacity: [0.7, 1, 0.7] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="text-white text-center bg-black/30 rounded-lg px-4 py-2 backdrop-blur-sm"
+                    >
+                      <p className="text-sm font-semibold">👆 Scratch here!</p>
+                    </motion.div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -159,7 +248,7 @@ export default function ScratchCard({ discount, onReveal, onClose }) {
             <p className="text-gray-600 text-sm mb-4">
               {isScratched 
                 ? "🎉 Discount applied to your total! Scroll down to see savings."
-                : "👆 Scratch the card to reveal your special discount!"
+                : "👆 Use your finger or mouse to scratch the card!"
               }
             </p>
             
@@ -167,14 +256,40 @@ export default function ScratchCard({ discount, onReveal, onClose }) {
               <motion.div
                 animate={{ y: [0, -5, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
-                className="flex items-center justify-center gap-2 text-purple-600 font-semibold"
+                className="flex items-center justify-center gap-2 text-purple-600 font-semibold text-sm"
               >
                 <Star size={16} className="fill-purple-600" />
                 Scratch to reveal your offer!
                 <Star size={16} className="fill-purple-600" />
               </motion.div>
             )}
+
+            {/* Mobile-specific instructions */}
+            <div className="mt-4 text-xs text-gray-500">
+              <p>💡 Tip: Use your finger to scratch on mobile devices</p>
+            </div>
           </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="p-6 pt-0">
+          {isScratched ? (
+            <motion.button
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-600 text-white py-3 rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+              onClick={onClose}
+            >
+              Continue with {discount}% OFF! 🎉
+            </motion.button>
+          ) : (
+            <button
+              className="w-full bg-gray-100 text-gray-600 py-3 rounded-xl font-semibold hover:bg-gray-200 transition-colors duration-300"
+              onClick={onClose}
+            >
+              Maybe Later
+            </button>
+          )}
         </div>
       </motion.div>
     </motion.div>
