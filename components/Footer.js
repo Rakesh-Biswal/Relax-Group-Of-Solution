@@ -66,7 +66,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-3">
                 <IndianRupee size={18} className="text-blue-400" />
-                <span className="text-sm text-gray-300">PAN: BUQPN8897r</span>
+                <span className="text-sm text-gray-300">PAN: BUQPN8897R</span>
               </div>
             </div>
           </motion.div>

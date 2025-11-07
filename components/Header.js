@@ -16,6 +16,7 @@ export default function Header() {
     { label: "Home", href: "/", icon: <Home size={18} /> },
     { label: "Get Free Quote", href: "/pricing", icon: <DollarSign size={18} /> },
     { label: "About Us", href: "/about", icon: <Info size={18} /> },
+    { label: "Our Blogs", href: "/blog", icon: <Award size={18} /> },
     { label: "Our Achievements", href: "/achievement", icon: <Award size={18} /> },
     { label: "Live Tracking", href: "/tracking", icon: <Map size={18} /> },
     { label: "Our Trusted Partners", href: "/partners", icon: <Users size={18} /> },
