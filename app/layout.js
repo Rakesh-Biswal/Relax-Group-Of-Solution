@@ -5,7 +5,7 @@ import Script from "next/script"
 
 // Update with your actual domain and information
 const SITE_URL = "https://packers.relaxgroup.in"
-const SITE_NAME = "Relax Packers & Movers | ରିଲାକ୍ସ ପ୍ୟାକର୍ସ ଆଣ୍ଡ ମୁଭର୍ସ"
+const SITE_NAME = "Relax Packers & Movers"
 const BUSINESS_NAME = "Relax Group"
 const BUSINESS_PHONE = "+91-9777012315"
 const BUSINESS_EMAIL = "bookrelaxpackers@gmail.com"
