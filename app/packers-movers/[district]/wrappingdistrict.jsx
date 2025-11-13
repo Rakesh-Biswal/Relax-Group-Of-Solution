@@ -11,7 +11,7 @@ import Testimonials from '../pakers_components/Testimonials'
 import FAQ from '../pakers_components/FAQ'  // Add this import
 import LottiePlayer from '../pakers_components/LottiePlayer'
 
-const taglines = [
+const taglines = [    
   "Delivering Happiness In Every Mile",
   "Lightning Fast. Ultra Safe.",
   "Your Local Delivery Experts",
