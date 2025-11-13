@@ -8,7 +8,7 @@ import AdCarousel from '../pakers_components/AdCarousel'
 import DistrictHero from '../pakers_components/DistrictHero'
 import FeaturesSection from '../pakers_components/FeaturesSection'
 import Testimonials from '../pakers_components/Testimonials'
-import FAQ from '../pakers_components/FAQ'  // Add this import
+import FAQ from '../pakers_components/FAQ' 
 import LottiePlayer from '../pakers_components/LottiePlayer'
 
 const taglines = [    
