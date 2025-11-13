@@ -12,7 +12,6 @@ import ContactForm from "@/components/ContactForm"
 import Footer from "@/components/Footer"
 import Script from "next/script"
 
-// SEO Metadata for home page
 export const metadata = {
   title: "Relax Packers & Movers | Professional Packers & Movers in Odisha & Across India",
   description: "Odisha's most trusted packers and movers service. Professional home relocation, office shifting & courier services in Cuttack, Bhubaneswar & across India. Real-time tracking, insurance, 24/7 Odia support.",
