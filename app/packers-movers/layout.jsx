@@ -1,21 +1,19 @@
-// app/layout.jsx
+// app/packers-movers/layout.jsx
+
+// ❗ REMOVE metadataBase here (only allowed in root layout)
 export const metadata = {
-  metadataBase: new URL('https://packers.relaxgroup.in'), // Replace with your actual domain
   title: {
     template: '%s | Relax Packers and Movers',
-    default: 'Relax Packers and Movers - Professional Delivery Services',
+    default: 'Relax Packers and Movers - Packers & Movers Services',
   },
-  description: 'Professional packers and movers services across Odisha with same-day delivery, GPS tracking, and affordable rates.',
-}
+  description:
+    'Professional packers and movers services across Odisha with GPS tracking and affordable rates.',
+};
 
-export const viewport = {
-  themeColor: "#a4723d",
-}
-
-export default function RootLayout({ children }) {
+export default function PackersMoversLayout({ children }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
-  )
+    <>
+      {children}
+    </>
+  );
 }

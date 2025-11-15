@@ -1,4 +1,4 @@
-// app/packers-movers/[district]/page.jsx
+// app/packers-movers/[district]/wrappingdistrict.jsx
 'use client'
 import { Metadata } from 'next'
 import Header from '../../../components/Header'
@@ -9,8 +9,6 @@ import DistrictHero from '../pakers_components/DistrictHero'
 import FeaturesSection from '../pakers_components/FeaturesSection'
 import Testimonials from '../pakers_components/Testimonials'
 import FAQ from '../pakers_components/FAQ' 
-import dynamic from 'next/dynamic'
-const LottiePlayer = dynamic(() => import('../pakers_components/LottiePlayer'), { ssr: false })
 
 
 
@@ -29,7 +27,7 @@ export async function generateMetadata({ params }) {
   const district = params.district
   const districtName = district.charAt(0).toUpperCase() + district.slice(1)
   
-  const description = `Welcome to Relax Packers & Movers in ${districtName}, where relocating isn't just about moving boxes, it's about moving lives with care. With over 15 years of trusted service across Odisha, we've helped more than 15,000 families and businesses in ${districtName} transition smoothly to their new destinations. Our experienced team handles your memories, your investments, and your peace of mind from the moment you call us to the final unpacking at your doorstep.`
+  const description = `Need packers and movers in ${districtName} right now? Get up to 30% OFF on your first booking with Relax Packers & Movers! We provide fast packing, safe handling, GPS-enabled transport, and same-day shifting support. With 15 years of expertise across Odisha, we are trusted by thousands for reliable, damage-free, and affordable relocation. Call now and experience the fastest, safest way to move!`
 
   return {
     title: `Relax Packers & Movers in ${districtName} - ${DEFAULT_PHONE}`,
@@ -64,7 +62,7 @@ export default function DistrictPage({ params }) {
   const district = params.district
   const districtName = district.charAt(0).toUpperCase() + district.slice(1)
   
-  const description = `Welcome to Relax Packers & Movers in ${districtName}, where relocating isn't just about moving boxes, it's about moving lives with care. With over 15 years of trusted service across Odisha, we've helped more than 15,000 families and businesses in ${districtName} transition smoothly to their new destinations. Our experienced team handles your memories, your investments, and your peace of mind from the moment you call us to the final unpacking at your doorstep. Because at Relax, your satisfaction isn't our goal – it's our guarantee.`
+  const description = `Need packers and movers in ${districtName} right now? Get up to 30% OFF on your first booking with Relax Packers & Movers! We provide fast packing, safe handling, GPS-enabled transport, and same-day shifting support. With 15 years of expertise across Odisha, we are trusted by thousands for reliable, damage-free, and affordable relocation. Call now and experience the fastest, safest way to move!`
 
   return (
     <main className="bg-gray-50 text-gray-800">
@@ -73,12 +71,12 @@ export default function DistrictPage({ params }) {
 
       {/* Hero Section */}
       <section id="home" className="pb-20 relative" style={{ backgroundColor: '#f8f5f1' }}>
-        <div className="absolute left-6 top-0 hidden md:block" style={{ zIndex: 0 }}>
+        {/* <div className="absolute left-6 top-0 hidden md:block" style={{ zIndex: 0 }}>
           <LottiePlayer
             src="https://assets10.lottiefiles.com/packages/lf20_zbqh2bdp.json"
             style={{ height: '190px', width: '190px' }}
           />
-        </div>
+        </div> */}
 
         <DistrictHero 
           districtName={districtName} 

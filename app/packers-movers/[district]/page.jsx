@@ -1,7 +1,6 @@
-import React from 'react'
-import DistrictPage from './wrappingdistrict'
 
-// ✅ Always receive params from Next.js and pass them down
+import DistrictPage from './wrappingdistrict.client'
+
 export default function Page({ params }) {
   return <DistrictPage params={params} />
 }

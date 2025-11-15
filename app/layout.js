@@ -128,7 +128,6 @@ export const metadata = {
       },
     ],
   },
-  themeColor: '#a4723dff', // Your brand color
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -167,11 +166,11 @@ export default function RootLayout({ children }) {
         <link rel="dns-prefetch" href="//www.googletagmanager.com" />
 
         {/* Language Alternatives for SEO */}
-        <link rel="alternate" hreflang="en-IN" href={SITE_URL} />
-        <link rel="alternate" hreflang="or-IN" href={SITE_URL} />
-        <link rel="alternate" hreflang="x-default" href={SITE_URL} />
-        <link rel="alternate" hreflang="en" href={SITE_URL} />
-        <link rel="alternate" hreflang="or" href={SITE_URL} />
+        <link rel="alternate" hrefLang="en-IN" href={SITE_URL} />
+        <link rel="alternate" hrefLang="or-IN" href={SITE_URL} />
+        <link rel="alternate" hrefLang="x-default" href={SITE_URL} />
+        <link rel="alternate" hrefLang="en" href={SITE_URL} />
+        <link rel="alternate" hrefLang="or" href={SITE_URL} />
 
         {/* Enhanced Local Business Meta */}
         <meta name="geo.region" content="IN-OD" />

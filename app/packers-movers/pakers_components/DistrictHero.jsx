@@ -1,7 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import LottiePlayer from './LottiePlayer'
+// import LottiePlayer from './LottiePlayer'
 
 export default function DistrictHero({ districtName, description, phone }) {
   return (
@@ -35,7 +35,7 @@ export default function DistrictHero({ districtName, description, phone }) {
       </div>
 
       {/* Animated Delivery Boy gives product (right) */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, x: 60 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 1 }}
@@ -46,7 +46,7 @@ export default function DistrictHero({ districtName, description, phone }) {
           src="https://assets1.lottiefiles.com/packages/lf20_tzptyq2g.json"
           style={{ height: '180px', width: '180px' }}
         />
-      </motion.div>
+      </motion.div> */}
 
       <div className="relative max-w-7xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
         {/* Left Content */}
