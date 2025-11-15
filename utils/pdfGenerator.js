@@ -5,6 +5,11 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
 export const generateQuotationPDF = async (quotation) => {
+
+  if (typeof window === 'undefined') {
+    throw new Error('PDF generation is only available in browser environment');
+  }
+
   const pdfContainer = document.createElement('div');
   pdfContainer.style.width = '210mm';
   pdfContainer.style.minHeight = '297mm';
@@ -82,13 +87,13 @@ export const generateQuotationPDF = async (quotation) => {
           <div style="display: flex; align-items: flex-start; gap: 12px;">
             <!-- Actual Logo -->
             <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: ${logoBase64 ? 'none' : '1px solid #ddd'}; background: ${logoBase64 ? 'transparent' : '#f9f9f9'};">
-              ${logoBase64 ? 
-                `<img src="${logoBase64}" alt="Relax Packers & Movers" style="width: 100%; height: 100%; object-fit: contain;" />` : 
-                `<div style="text-align: center;">
+              ${logoBase64 ?
+      `<img src="${logoBase64}" alt="Relax Packers & Movers" style="width: 100%; height: 100%; object-fit: contain;" />` :
+      `<div style="text-align: center;">
                   <div style="font-size: 8pt; color: #666;">LOGO</div>
                   <div style="font-size: 6pt; color: #999;">(Image not loaded)</div>
                 </div>`
-              }
+    }
             </div>
             
             <!-- Business Information -->
@@ -272,13 +277,13 @@ export const generateQuotationPDF = async (quotation) => {
           
           <div style="text-align: center;">
             <div style="display: inline-block; text-align: center;">
-              ${stampBase64 ? 
-                `<img src="${stampBase64}" alt="Company Stamp" style="width: 120px; height: 80px; object-fit: contain;" />` :
-                `<div style="border: 1px solid #999; padding: 12px; background: #f9f9f9; border-radius: 4px;">
+              ${stampBase64 ?
+      `<img src="${stampBase64}" alt="Company Stamp" style="width: 120px; height: 80px; object-fit: contain;" />` :
+      `<div style="border: 1px solid #999; padding: 12px; background: #f9f9f9; border-radius: 4px;">
                   <p style="font-size: 8pt; margin: 0; font-weight: bold; color: #333;">COMPANY STAMP</p>
                   <p style="font-size: 7pt; margin: 4px 0 0 0; color: #666;">(Image not loaded)</p>
                 </div>`
-              }
+    }
               <p style="font-size: 7pt; margin: 2px 0 0 0; color: #666;">Authorized Signatory</p>
             </div>
           </div>

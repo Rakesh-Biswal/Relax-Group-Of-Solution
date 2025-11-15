@@ -1,6 +1,5 @@
 // app/packers-movers/layout.jsx
 
-// ❗ REMOVE metadataBase here (only allowed in root layout)
 export const metadata = {
   title: {
     template: '%s | Relax Packers and Movers',
