@@ -1,6 +1,6 @@
-// app/packers-movers/[district]/wrappingdistrict.jsx
+// app/packers-movers/[district]/wrappingdistrict.client.jsx
 'use client'
-import { Metadata } from 'next'
+import { useState, useEffect } from 'react'
 import Header from '../../../components/Header'
 import Footer from '../../../components/Footer'
 import AnimatedTagline from '../pakers_components/AnimatedTagline'
@@ -9,8 +9,6 @@ import DistrictHero from '../pakers_components/DistrictHero'
 import FeaturesSection from '../pakers_components/FeaturesSection'
 import Testimonials from '../pakers_components/Testimonials'
 import FAQ from '../pakers_components/FAQ' 
-
-
 
 const taglines = [    
   "Delivering Happiness In Every Mile",
@@ -22,47 +20,35 @@ const taglines = [
 // Default phone number
 const DEFAULT_PHONE = '9777012315'
 
-// Generate dynamic metadata for WhatsApp preview
-export async function generateMetadata({ params }) {
-  const district = params.district
-  const districtName = district.charAt(0).toUpperCase() + district.slice(1)
-  
-  const description = `Need packers and movers in ${districtName} right now? Get up to 30% OFF on your first booking with Relax Packers & Movers! We provide fast packing, safe handling, GPS-enabled transport, and same-day shifting support. With 15 years of expertise across Odisha, we are trusted by thousands for reliable, damage-free, and affordable relocation. Call now and experience the fastest, safest way to move!`
+export default function DistrictClientPage({ params }) {
+  const [districtName, setDistrictName] = useState('')
+  const [description, setDescription] = useState('')
 
-  return {
-    title: `Relax Packers & Movers in ${districtName} - ${DEFAULT_PHONE}`,
-    description: description,
-    openGraph: {
-      title: `Relax Packers & Movers in ${districtName} - ${DEFAULT_PHONE}`,
-      description: description,
-      url: `https://packers.relaxgroup.in/packers-movers/${district}`,
-      siteName: 'Relax Packers & Movers | ରିଲାକ୍ସ ପ୍ୟାକର୍ସ ଆଣ୍ଡ ମୁଭର୍ସ',
-      images: [
-        {
-          url: 'https://packers.relaxgroup.in/images/packing-real.jpg',
-          width: 1200,
-          height: 630,
-          alt: `Relax Packers and Movers in ${districtName}`,
-        }
-      ],
-      locale: 'en_IN',
-      type: 'website',
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `Relax Packers & Movers in ${districtName} - ${DEFAULT_PHONE}`,
-      description: description,
-      images: ['https://packers.relaxgroup.in/images/packing-real.jpg'],
+  useEffect(() => {
+    // This runs only on client side
+    if (params.district) {
+      const district = params.district
+      const name = district.charAt(0).toUpperCase() + district.slice(1)
+      setDistrictName(name)
+      setDescription(`Need packers and movers in ${name} right now? Get up to 30% OFF on your first booking with Relax Packers & Movers! We provide fast packing, safe handling, GPS-enabled transport, and same-day shifting support. With 15 years of expertise across Odisha, we are trusted by thousands for reliable, damage-free, and affordable relocation. Call now and experience the fastest, safest way to move!`)
     }
-  }
-}
+  }, [params.district])
 
-// Server Component (no 'use client')
-export default function DistrictPage({ params }) {
-  const district = params.district
-  const districtName = district.charAt(0).toUpperCase() + district.slice(1)
-  
-  const description = `Need packers and movers in ${districtName} right now? Get up to 30% OFF on your first booking with Relax Packers & Movers! We provide fast packing, safe handling, GPS-enabled transport, and same-day shifting support. With 15 years of expertise across Odisha, we are trusted by thousands for reliable, damage-free, and affordable relocation. Call now and experience the fastest, safest way to move!`
+  // Show loading state while district name is being set
+  if (!districtName) {
+    return (
+      <main className="bg-gray-50 text-gray-800">
+        <Header />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#a4723d] mx-auto mb-4"></div>
+            <p>Loading...</p>
+          </div>
+        </div>
+        <Footer />
+      </main>
+    )
+  }
 
   return (
     <main className="bg-gray-50 text-gray-800">
@@ -71,13 +57,6 @@ export default function DistrictPage({ params }) {
 
       {/* Hero Section */}
       <section id="home" className="pb-20 relative" style={{ backgroundColor: '#f8f5f1' }}>
-        {/* <div className="absolute left-6 top-0 hidden md:block" style={{ zIndex: 0 }}>
-          <LottiePlayer
-            src="https://assets10.lottiefiles.com/packages/lf20_zbqh2bdp.json"
-            style={{ height: '190px', width: '190px' }}
-          />
-        </div> */}
-
         <DistrictHero 
           districtName={districtName} 
           description={description}
@@ -127,20 +106,14 @@ export default function DistrictPage({ params }) {
         </a>
       </section>
 
-
-
-     {/* FAQ Section - NEW */}
+      {/* FAQ Section */}
       <FAQ districtName={districtName} />
-
-
       
       {/* Features Section */}
       <FeaturesSection />
 
       {/* Testimonials */}
       <Testimonials districtName={districtName} />
-
-     
 
       {/* Featured On */}
       <section id="featured" className="py-20 bg-gray-50">
