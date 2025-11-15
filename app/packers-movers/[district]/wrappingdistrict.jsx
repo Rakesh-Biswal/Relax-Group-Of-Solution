@@ -9,7 +9,10 @@ import DistrictHero from '../pakers_components/DistrictHero'
 import FeaturesSection from '../pakers_components/FeaturesSection'
 import Testimonials from '../pakers_components/Testimonials'
 import FAQ from '../pakers_components/FAQ' 
-import LottiePlayer from '../pakers_components/LottiePlayer'
+import dynamic from 'next/dynamic'
+const LottiePlayer = dynamic(() => import('../pakers_components/LottiePlayer'), { ssr: false })
+
+
 
 const taglines = [    
   "Delivering Happiness In Every Mile",

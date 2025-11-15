@@ -128,7 +128,6 @@ export const metadata = {
       },
     ],
   },
-  manifest: '/manifest.json', // For PWA
   themeColor: '#a4723dff', // Your brand color
   appleWebApp: {
     capable: true,

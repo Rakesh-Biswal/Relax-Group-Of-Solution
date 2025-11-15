@@ -13,7 +13,7 @@ export const generateQuotationPDF = async (quotation) => {
   pdfContainer.style.fontFamily = 'Arial, sans-serif';
   pdfContainer.style.fontSize = '10pt';
   pdfContainer.style.lineHeight = '1.3';
-  
+
   // Format functions
   const formatIndianRupees = (amount) => {
     return new Intl.NumberFormat('en-IN', {
@@ -35,7 +35,7 @@ export const generateQuotationPDF = async (quotation) => {
     const transportTotal = (quotation.transportation.householdGoods.charge || 0) + (quotation.transportation.carTransport.charge || 0);
     const servicesTotal = Object.values(quotation.services).reduce((sum, val) => sum + (val || 0), 0);
     const subtotal = transportTotal + servicesTotal;
-    
+
     return {
       transportTotal,
       servicesTotal,
@@ -47,6 +47,28 @@ export const generateQuotationPDF = async (quotation) => {
   const totals = calculateTotals();
   const activeServices = Object.entries(quotation.services).filter(([_, value]) => value > 0);
 
+  // Function to load image and return base64 or null
+  const loadImageAsBase64 = async (url) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error(`Failed to load image: ${url}`, error);
+      return null;
+    }
+  };
+
+  // Load images
+  const [logoBase64, stampBase64] = await Promise.all([
+    loadImageAsBase64('https://relaxgroup.in/images/relax-logo-removebg.png'),
+    loadImageAsBase64('./images/relax-brand-stamp.png')
+  ]);
+
   // Build compact PDF HTML content
   pdfContainer.innerHTML = `
     <div style="min-height: 277mm; background: white;">
@@ -55,25 +77,28 @@ export const generateQuotationPDF = async (quotation) => {
         <!-- Left side: Logo and Business Info -->
         <div style="flex: 1;">
           <div style="display: flex; align-items: flex-start; gap: 12px;">
-            <!-- Logo Placeholder -->
-            <div style="width: 75px; height: 75px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; background: #f9f9f9;">
-              <div style="text-align: center;">
-                <div style="font-size: 8pt; color: #666;">YOUR LOGO</div>
-                <div style="font-size: 6pt; color: #999;">(Replace with image)</div>
-              </div>
+            <!-- Actual Logo -->
+            <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: ${logoBase64 ? 'none' : '1px solid #ddd'}; background: ${logoBase64 ? 'transparent' : '#f9f9f9'};">
+              ${logoBase64 ? 
+                `<img src="${logoBase64}" alt="Relax Packers & Movers" style="width: 100%; height: 100%; object-fit: contain;" />` : 
+                `<div style="text-align: center;">
+                  <div style="font-size: 8pt; color: #666;">LOGO</div>
+                  <div style="font-size: 6pt; color: #999;">(Image not loaded)</div>
+                </div>`
+              }
             </div>
             
             <!-- Business Information -->
             <div style="flex: 1;">
               <h2 style="font-size: 15pt; font-weight: bold; margin: 0 0 5px 0; color: #000;">RELAX PACKERS & MOVERS</h2>
               <p style="font-size: 9pt; margin: 2px 0; color: #666;">
-                Registered Office: Delhi, India - 110034
+                Registered Office: Cuttack, Odisha - 753014
               </p>
               <p style="font-size: 9pt; margin: 2px 0; color: #666;">
-                Phone: +91-11-45004300 | Email: info@relaxpackers.com
+                Phone: +91 97770 12315 | Email: bookrelaxpackers@gmail.com
               </p>
               <p style="font-size: 8pt; margin: 2px 0; color: #999;">
-                GST: 07AABCR1234XYZ | License No: PM123456789
+                GST IN: 21BUQPN8897R1Z8
               </p>
             </div>
           </div>
@@ -114,7 +139,6 @@ export const generateQuotationPDF = async (quotation) => {
 
       <!-- Pricing Table - Improved spacing -->
       <div style="margin-bottom: 15px;">
-        
         <table style="width: 100%; border-collapse: collapse; font-size: 9pt; border: 1px solid #ccc; margin-top: 5px;">
           <thead>
             <tr style="background: #f8f8f8;">
@@ -214,18 +238,26 @@ export const generateQuotationPDF = async (quotation) => {
         </table>
       </div>
 
-      <!-- Terms & Conditions - Single Column -->
+      <!-- Terms & Conditions - Two Columns -->
       <div style="margin-bottom: 15px;">
-        <h3 style="font-size: 12pt; font-weight: bold; margin: 0 0 5px 0; display: inline-block;">TERMS & CONDITIONS</h3>
-        <div style="font-size: 9pt; line-height: 1.4; padding: 8px 0;">
-          <p style="margin: 4px 0;">• Valid for 30 days from quotation date</p>
-          <p style="margin: 4px 0;">• 20% advance to confirm booking</p>
-          <p style="margin: 4px 0;">• All packing materials included</p>
-          <p style="margin: 4px 0;">• Insurance up to ₹2,00,000 included</p>
+        <h3 style="font-size: 12pt; font-weight: bold; margin: 0 0 8px 0;">TERMS & CONDITIONS</h3>
+        <div style="display: flex; justify-content: space-between; gap: 20px; font-size: 9pt; line-height: 1.4;">
+          <!-- Column 1 -->
+          <div style="flex: 1;">
+            <p style="margin: 4px 0;">• Valid for 30 days from quotation date</p>
+            <p style="margin: 4px 0;">• 20% advance to confirm booking</p>
+            <p style="margin: 4px 0;">• All packing materials included</p>
+          </div>
+          <!-- Column 2 -->
+          <div style="flex: 1;">
+            <p style="margin: 4px 0;">• Insurance up to ₹2,00,000 included</p>
+            <p style="margin: 4px 0;">• Transit: 3-7 business days</p>
+            <p style="margin: 4px 0;">• Complete door-to-door service</p>
+          </div>
         </div>
       </div>
 
-      <!-- Footer with stamp only -->
+      <!-- Footer with actual stamp -->
       <div style="border-top: 1px solid #ddd; padding-top: 12px; margin-top: 15px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end;">
           <div style="flex: 1;">
@@ -236,9 +268,15 @@ export const generateQuotationPDF = async (quotation) => {
           </div>
           
           <div style="text-align: center;">
-            <div style="border: 1px solid #999; padding: 12px; display: inline-block; background: #f9f9f9; border-radius: 4px;">
-              <p style="font-size: 8pt; margin: 0; font-weight: bold; color: #333;">COMPANY STAMP</p>
-              <p style="font-size: 7pt; margin: 4px 0 0 0; color: #666;">(Authorized Signatory)</p>
+            <div style="display: inline-block; text-align: center;">
+              ${stampBase64 ? 
+                `<img src="${stampBase64}" alt="Company Stamp" style="width: 120px; height: 80px; object-fit: contain;" />` :
+                `<div style="border: 1px solid #999; padding: 12px; background: #f9f9f9; border-radius: 4px;">
+                  <p style="font-size: 8pt; margin: 0; font-weight: bold; color: #333;">COMPANY STAMP</p>
+                  <p style="font-size: 7pt; margin: 4px 0 0 0; color: #666;">(Image not loaded)</p>
+                </div>`
+              }
+              <p style="font-size: 7pt; margin: 2px 0 0 0; color: #666;">Authorized Signatory</p>
             </div>
           </div>
         </div>
@@ -252,10 +290,10 @@ export const generateQuotationPDF = async (quotation) => {
             ✨ 5000+ Happy Families | 98% Customer Satisfaction | 🚚 24/7 Customer Support
           </p>
           <p style="font-size: 8pt; margin: 2px 0; color: #666;">
-            📞 Call Now: +91-11-45004300 | 💬 WhatsApp: +91-9876543210 | ✉️ Email: bookrelaxpackers@gmail.com
+            📞 Call Now: +91 97770 12315 | 💬 WhatsApp: +91 97770 12315 | ✉️ Email: bookrelaxpackers@gmail.com
           </p>
           <p style="font-size: 7pt; margin: 3px 0; color: #999; font-style: italic;">
-            "Making Your Move Memorable & Stress-Free"
+            "Making Your Move Memorable & Stress-Free" • Generated on ${new Date().toLocaleDateString('en-IN')}
           </p>
         </div>
       </div>
@@ -275,7 +313,9 @@ export const generateQuotationPDF = async (quotation) => {
       height: pdfContainer.offsetHeight,
       windowWidth: pdfContainer.scrollWidth,
       windowHeight: pdfContainer.scrollHeight,
-      backgroundColor: '#ffffff'
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      allowTaint: true
     });
 
     // Create PDF
