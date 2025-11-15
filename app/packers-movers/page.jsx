@@ -136,17 +136,17 @@ export default function Page() {
       {/* Hero Section */}
       <section id="home" className="pb-20 relative" style={{ backgroundColor: '#f8f5f1' }}>
         {/* Animated Delivery Lottie (truck, left) */}
-        <div className="absolute left-6 top-0 hidden md:block" style={{ zIndex: 0 }}>
+        {/* <div className="absolute left-6 top-0 hidden md:block" style={{ zIndex: 0 }}>
           <Player
             autoplay
             loop
             src="https://assets10.lottiefiles.com/packages/lf20_zbqh2bdp.json"
             style={{ height: '190px', width: '190px' }}
           />
-        </div>
+        </div> */}
 
         {/* Animated Delivery Boy gives product (right) */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, x: 60 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 1 }}
@@ -159,7 +159,7 @@ export default function Page() {
             src="https://assets1.lottiefiles.com/packages/lf20_tzptyq2g.json"
             style={{ height: '180px', width: '180px' }}
           />
-        </motion.div>
+        </motion.div> */}
 
         {/* Custom Hero Content */}
         <Pakers_HeroSection />
