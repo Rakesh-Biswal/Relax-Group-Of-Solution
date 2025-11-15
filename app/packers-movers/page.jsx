@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
 
 import Image from "next/image"
 import Link from "next/link"
