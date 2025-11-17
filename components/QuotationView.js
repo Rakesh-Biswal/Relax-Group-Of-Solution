@@ -27,8 +27,16 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
   }
 
   const calculateTotals = () => {
-    const transportTotal = (quotation.transportation.householdGoods.charge || 0) + (quotation.transportation.carTransport.charge || 0)
-    const servicesTotal = Object.values(quotation.services).reduce((sum, val) => sum + (val || 0), 0)
+    const transportTotal = quotation.transportation.householdGoods.charge || 0
+    const servicesTotal = 
+      (quotation.services.packing || 0) +
+      (quotation.services.unpacking || 0) +
+      (quotation.services.loading || 0) +
+      (quotation.services.unloading || 0) +
+      (quotation.services.stabilization || 0) +
+      (quotation.services.additionalCharge || 0) +
+      (quotation.services.electricalService?.charge || 0)
+    
     const subtotal = transportTotal + servicesTotal
     
     return {
@@ -40,7 +48,19 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
   }
 
   const totals = calculateTotals()
-  const activeServices = Object.entries(quotation.services).filter(([_, value]) => value > 0)
+  
+  // Filter active services (excluding electrical service which is handled separately)
+  const activeServices = Object.entries(quotation.services)
+    .filter(([key, value]) => {
+      if (key === 'electricalService') return false
+      if (key === 'additionalCharge') return value > 0
+      return value > 0
+    })
+
+  // Check if electrical service is active
+  const hasElectricalService = quotation.services.electricalService && 
+    (quotation.services.electricalService.disconnect || quotation.services.electricalService.reconnect) &&
+    quotation.services.electricalService.charge > 0
 
   const handleUpdate = (updatedQuotation) => {
     onUpdate(updatedQuotation)
@@ -219,6 +239,12 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
                       <p className="font-semibold text-gray-900">{quotation.transportation.householdGoods.volume}</p>
                     </div>
                   )}
+                  {quotation.transportation.householdGoods.approxDistance && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">Approx Distance</p>
+                      <p className="font-semibold text-gray-900">{quotation.transportation.householdGoods.approxDistance}</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -271,24 +297,14 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
                         {quotation.transportation.householdGoods.volume && (
                           <p className="text-sm text-gray-600 mt-1">Volume: {quotation.transportation.householdGoods.volume}</p>
                         )}
+                        {quotation.transportation.householdGoods.approxDistance && (
+                          <p className="text-sm text-gray-600 mt-1">Distance: {quotation.transportation.householdGoods.approxDistance}</p>
+                        )}
                       </div>
                       <p className="font-bold text-blue-600 text-lg">
                         ₹{quotation.transportation.householdGoods.charge?.toLocaleString('en-IN')}
                       </p>
                     </div>
-
-                    {/* Car Transport */}
-                    {quotation.transportation.carTransport.charge > 0 && (
-                      <div className="flex justify-between items-start py-3 border-b border-gray-100">
-                        <div>
-                          <p className="font-semibold text-gray-900">Car Transportation</p>
-                          <p className="text-sm text-gray-600 mt-1">Door-to-door service</p>
-                        </div>
-                        <p className="font-bold text-blue-600 text-lg">
-                          ₹{quotation.transportation.carTransport.charge?.toLocaleString('en-IN')}
-                        </p>
-                      </div>
-                    )}
 
                     {/* Additional Services */}
                     {activeServices.length > 0 && (
@@ -297,17 +313,53 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
                         <div className="space-y-2 ml-4">
                           {activeServices.map(([key, value]) => (
                             <div key={key} className="flex justify-between items-center">
-                              <span className="text-gray-700 capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</span>
+                              <span className="text-gray-700 capitalize">
+                                {key === 'additionalCharge' ? 'Additional Charge' : key.replace(/([A-Z])/g, ' $1').trim()}
+                              </span>
                               <span className="font-semibold">₹{value.toLocaleString('en-IN')}</span>
                             </div>
                           ))}
                         </div>
-                        <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-200">
-                          <span className="font-semibold text-gray-700">Services Total</span>
-                          <span className="font-bold text-blue-600">₹{totals.servicesTotal.toLocaleString('en-IN')}</span>
+                      </div>
+                    )}
+
+                    {/* Electrical Service */}
+                    {hasElectricalService && (
+                      <div className="py-3 border-b border-gray-100">
+                        <p className="font-semibold text-gray-900 mb-3">Electrical Services</p>
+                        <div className="space-y-2 ml-4">
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <span className="text-gray-700">
+                                {quotation.services.electricalService.disconnect && quotation.services.electricalService.reconnect 
+                                  ? 'Electrical Disconnect & Reconnect'
+                                  : quotation.services.electricalService.disconnect 
+                                    ? 'Electrical Disconnect'
+                                    : 'Electrical Reconnect'
+                                }
+                              </span>
+                            </div>
+                            <span className="font-semibold">
+                              ₹{quotation.services.electricalService.charge.toLocaleString('en-IN')}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     )}
+
+                    {/* Services Total */}
+                    {(activeServices.length > 0 || hasElectricalService) && (
+                      <div className="flex justify-between items-center py-3 border-b border-gray-200">
+                        <span className="font-semibold text-gray-700">Services Total</span>
+                        <span className="font-bold text-blue-600">₹{totals.servicesTotal.toLocaleString('en-IN')}</span>
+                      </div>
+                    )}
+
+                    {/* Subtotal */}
+                    <div className="flex justify-between items-center py-3 border-b border-gray-200">
+                      <span className="font-semibold text-gray-700">Subtotal</span>
+                      <span className="font-bold text-blue-600">₹{totals.subtotal.toLocaleString('en-IN')}</span>
+                    </div>
 
                     {/* Taxes */}
                     <div className="space-y-2">

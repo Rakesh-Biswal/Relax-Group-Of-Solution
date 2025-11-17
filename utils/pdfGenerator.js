@@ -1,6 +1,5 @@
 "use client";
 
-
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -40,8 +39,16 @@ export const generateQuotationPDF = async (quotation) => {
   };
 
   const calculateTotals = () => {
-    const transportTotal = (quotation.transportation.householdGoods.charge || 0) + (quotation.transportation.carTransport.charge || 0);
-    const servicesTotal = Object.values(quotation.services).reduce((sum, val) => sum + (val || 0), 0);
+    const transportTotal = quotation.transportation.householdGoods.charge || 0;
+    const servicesTotal = 
+      (quotation.services.packing || 0) +
+      (quotation.services.unpacking || 0) +
+      (quotation.services.loading || 0) +
+      (quotation.services.unloading || 0) +
+      (quotation.services.stabilization || 0) +
+      (quotation.services.additionalCharge || 0) +
+      (quotation.services.electricalService?.charge || 0);
+    
     const subtotal = transportTotal + servicesTotal;
 
     return {
@@ -53,7 +60,18 @@ export const generateQuotationPDF = async (quotation) => {
   };
 
   const totals = calculateTotals();
-  const activeServices = Object.entries(quotation.services).filter(([_, value]) => value > 0);
+  
+  // Filter active services including electrical service
+  const activeServices = Object.entries(quotation.services)
+    .filter(([key, value]) => {
+      if (key === 'electricalService') {
+        return quotation.services.electricalService && 
+          (quotation.services.electricalService.disconnect || quotation.services.electricalService.reconnect) &&
+          quotation.services.electricalService.charge > 0;
+      }
+      if (key === 'additionalCharge') return value > 0;
+      return value > 0;
+    });
 
   // Function to load image and return base64 or null
   const loadImageAsBase64 = async (url) => {
@@ -72,11 +90,11 @@ export const generateQuotationPDF = async (quotation) => {
   };
 
   // Load images
-  const [logoBase64, stampBase64] = await Promise.all([
-    loadImageAsBase64('https://relaxgroup.in/images/relax-logo-removebg.png'),
-    loadImageAsBase64('./images/relax-brand-stamp.png')
-  ]);
-
+const [logoBase64, stampBase64, qrCodeBase64] = await Promise.all([
+  loadImageAsBase64('https://relaxgroup.in/images/relax-logo-removebg.png'),
+  loadImageAsBase64('./images/relax-brand-stamp.png'),
+  loadImageAsBase64('./images/relax-qr-code.png') // Add your QR code image path
+]);
   // Build compact PDF HTML content
   pdfContainer.innerHTML = `
     <div style="min-height: 277mm; background: white;">
@@ -120,16 +138,33 @@ export const generateQuotationPDF = async (quotation) => {
         </div>
       </div>
 
-      <!-- Customer Details without box -->
-      <div style="margin-bottom: 15px;">
-        <h3 style="font-size: 11pt; font-weight: bold; margin: 0 0 5px 0; display: inline-block;">To</h3>
-        <div style="padding: 8px 0;">
-          <p style="font-size: 10pt; margin: 4px 0; font-weight: bold;">
-            ${quotation.customer.gender === 'Male' ? 'Mr.' : 'Ms.'} ${quotation.customer.name}
-          </p>
-          <p style="font-size: 9pt; margin: 3px 0; line-height: 1.3;">${quotation.customer.address}</p>
-          <p style="font-size: 9pt; margin: 3px 0;">📞 ${quotation.customer.phone}</p>
-          ${quotation.customer.email ? `<p style="font-size: 9pt; margin: 3px 0;">✉️ ${quotation.customer.email}</p>` : ''}
+      <!-- Customer Details -->
+      <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+        <!-- Left side: Customer Information -->
+        <div style="flex: 1;">
+          <h3 style="font-size: 11pt; font-weight: bold; margin: 0 0 5px 0; display: inline-block;">To</h3>
+          <div style="padding: 8px 0;">
+            <p style="font-size: 10pt; margin: 4px 0; font-weight: bold;">
+              ${quotation.customer.gender === 'Male' ? 'Mr.' : 'Ms.'} ${quotation.customer.name}
+            </p>
+            <p style="font-size: 9pt; margin: 3px 0; line-height: 1.3;">${quotation.customer.address}</p>
+            <p style="font-size: 9pt; margin: 3px 0;">📞 ${quotation.customer.phone}</p>
+            ${quotation.customer.email ? `<p style="font-size: 9pt; margin: 3px 0;">✉️ ${quotation.customer.email}</p>` : ''}
+          </div>
+        </div>
+        
+        <!-- Right side: From/To Locations -->
+        <div style="flex: 1; text-align: right;">
+          <div style="display: inline-block; text-align: left;">
+            <div style="margin-bottom: 8px;">
+              <p style="font-size: 10pt; margin: 0 0 2px 0; font-weight: bold; color: #333;">From:</p>
+              <p style="font-size: 9pt; margin: 0; color: #666;">${quotation.fromLocation}</p>
+            </div>
+            <div>
+              <p style="font-size: 10pt; margin: 0 0 2px 0; font-weight: bold; color: #333;">To:</p>
+              <p style="font-size: 9pt; margin: 0; color: #666;">${quotation.toLocation}</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -139,8 +174,7 @@ export const generateQuotationPDF = async (quotation) => {
           Dear <strong>${quotation.customer.gender === 'Male' ? 'Mr.' : 'Ms.'} ${quotation.customer.name}</strong>,
         </p>
         <p style="font-size: 10pt; margin: 6px 0 0 0; line-height: 1.5;">
-          We thank you for your valuable enquiry for transportation of your Household Goods & Car from 
-          <strong>${quotation.fromLocation}</strong> To <strong>${quotation.toLocation}</strong>. 
+          We thank you for your valuable enquiry for transportation of your Household Goods. 
           We are pleased to quote the rates for the same as under:
         </p>
       </div>
@@ -161,39 +195,52 @@ export const generateQuotationPDF = async (quotation) => {
               <td style="border: 1px solid #ddd; padding: 8px; text-align: center; vertical-align: top;">1</td>
               <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top;">
                 <strong>Household Goods Transportation</strong>
-                ${quotation.transportation.householdGoods.volume ? `<br><span style="font-size: 8pt; color: #666;">Volume: ${quotation.transportation.householdGoods.volume}</span>` : ''}
+                <div style="font-size: 8pt; color: #666; margin-top: 4px;">
+                  ${quotation.transportation.householdGoods.volume || quotation.transportation.householdGoods.approxDistance ? `
+                    ${quotation.transportation.householdGoods.volume ? `<span>Volume: ${quotation.transportation.householdGoods.volume}</span>` : ''}
+                    ${quotation.transportation.householdGoods.volume && quotation.transportation.householdGoods.approxDistance ? ' | ' : ''}
+                    ${quotation.transportation.householdGoods.approxDistance ? `<span>Distance: ${quotation.transportation.householdGoods.approxDistance}</span>` : ''}
+                  ` : ''}
+                </div>
               </td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right; vertical-align: top; font-weight: bold;">
                 ${quotation.transportation.householdGoods.charge?.toLocaleString('en-IN')}
               </td>
             </tr>
 
-            <!-- Car Transport - Only if applicable -->
-            ${quotation.transportation.carTransport.charge > 0 ? `
+            <!-- Services - Including Electrical Services -->
+            ${activeServices.length > 0 ? `
             <tr>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: center; vertical-align: top;">2</td>
               <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top;">
-                <strong>Car Transportation</strong>
-              </td>
-              <td style="border: 1px solid #ddd; padding: 8px; text-align: right; vertical-align: top; font-weight: bold;">
-                ${quotation.transportation.carTransport.charge?.toLocaleString('en-IN')}
-              </td>
-            </tr>
-            ` : ''}
-
-            <!-- Services -->
-            ${activeServices.length > 0 ? `
-            <tr>
-              <td style="border: 1px solid #ddd; padding: 8px; text-align: center; vertical-align: top;">${quotation.transportation.carTransport.charge > 0 ? '3' : '2'}</td>
-              <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top;">
                 <strong>Ancillary Services</strong>
                 <div style="font-size: 8pt; margin-top: 4px; color: #555;">
-                  ${activeServices.map(([key, value]) => `
-                    <div style="display: flex; justify-content: space-between; padding: 2px 0;">
-                      <span style="text-transform: capitalize;">${key.replace(/([A-Z])/g, ' $1').trim()}</span>
-                      <span>₹${value.toLocaleString('en-IN')}</span>
-                    </div>
-                  `).join('')}
+                  ${activeServices.map(([key, value]) => {
+                    if (key === 'electricalService') {
+                      const electricalService = quotation.services.electricalService;
+                      return `
+                        <div style="display: flex; justify-content: space-between; padding: 2px 0;">
+                          <span>
+                            ${electricalService.disconnect && electricalService.reconnect 
+                              ? 'Electrical Disconnect & Reconnect'
+                              : electricalService.disconnect 
+                                ? 'Electrical Disconnect'
+                                : 'Electrical Reconnect'
+                            }
+                          </span>
+                          <span>₹${electricalService.charge.toLocaleString('en-IN')}</span>
+                        </div>
+                      `;
+                    }
+                    return `
+                      <div style="display: flex; justify-content: space-between; padding: 2px 0;">
+                        <span style="text-transform: capitalize;">
+                          ${key === 'additionalCharge' ? 'Additional Charge' : key.replace(/([A-Z])/g, ' $1').trim()}
+                        </span>
+                        <span>₹${value.toLocaleString('en-IN')}</span>
+                      </div>
+                    `;
+                  }).join('')}
                 </div>
               </td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right; vertical-align: top; font-weight: bold;">
@@ -213,7 +260,9 @@ export const generateQuotationPDF = async (quotation) => {
             <!-- Taxes -->
             ${quotation.taxes.fov.amount > 0 ? `
             <tr>
-              <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${activeServices.length > 0 ? '4' : '3'}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                ${activeServices.length > 0 ? '3' : '2'}
+              </td>
               <td style="border: 1px solid #ddd; padding: 8px;">FOV @${quotation.taxes.fov.percentage}%</td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${quotation.taxes.fov.amount.toLocaleString('en-IN')}</td>
             </tr>
@@ -221,7 +270,9 @@ export const generateQuotationPDF = async (quotation) => {
 
             ${quotation.taxes.surcharge.amount > 0 ? `
             <tr>
-              <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${activeServices.length > 0 ? '5' : '4'}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                ${activeServices.length > 0 ? '4' : '3'}
+              </td>
               <td style="border: 1px solid #ddd; padding: 8px;">Surcharge @${quotation.taxes.surcharge.percentage}%</td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${quotation.taxes.surcharge.amount.toLocaleString('en-IN')}</td>
             </tr>
@@ -229,7 +280,9 @@ export const generateQuotationPDF = async (quotation) => {
 
             ${quotation.taxes.gst.amount > 0 ? `
             <tr>
-              <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${activeServices.length > 0 ? '6' : '5'}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                ${activeServices.length > 0 ? '5' : '4'}
+              </td>
               <td style="border: 1px solid #ddd; padding: 8px;">GST @${quotation.taxes.gst.percentage}%</td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${quotation.taxes.gst.amount.toLocaleString('en-IN')}</td>
             </tr>
@@ -246,6 +299,14 @@ export const generateQuotationPDF = async (quotation) => {
         </table>
       </div>
 
+      <!-- Additional Notes Section -->
+      ${quotation.notes ? `
+      <div style="margin-bottom: 15px; padding: 10px; background: #fff8e1; border: 1px solid #ffd54f; border-radius: 4px;">
+        <h3 style="font-size: 11pt; font-weight: bold; margin: 0 0 6px 0; color: #e65100;">Special Instructions</h3>
+        <p style="font-size: 9pt; margin: 0; line-height: 1.4; color: #5d4037;">${quotation.notes}</p>
+      </div>
+      ` : ''}
+
       <!-- Terms & Conditions - Two Columns -->
       <div style="margin-bottom: 15px;">
         <h3 style="font-size: 12pt; font-weight: bold; margin: 0 0 8px 0;">TERMS & CONDITIONS</h3>
@@ -255,35 +316,50 @@ export const generateQuotationPDF = async (quotation) => {
             <p style="margin: 4px 0;">• Valid for 30 days from quotation date</p>
             <p style="margin: 4px 0;">• 20% advance to confirm booking</p>
             <p style="margin: 4px 0;">• All packing materials included</p>
+            <p style="margin: 4px 0;">• Complete door-to-door service</p>
           </div>
           <!-- Column 2 -->
           <div style="flex: 1;">
             <p style="margin: 4px 0;">• Insurance up to ₹2,00,000 included</p>
             <p style="margin: 4px 0;">• Transit: 3-7 business days</p>
-            <p style="margin: 4px 0;">• Complete door-to-door service</p>
+            <p style="margin: 4px 0;">• Professional packing & handling</p>
+            <p style="margin: 4px 0;">• Electrical services as requested</p>
           </div>
         </div>
       </div>
 
-      <!-- Footer with actual stamp -->
+      <!-- Footer with Booking Information and Stamp -->
       <div style="border-top: 1px solid #ddd; padding-top: 12px; margin-top: 15px;">
         <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <!-- Left side: Compact Booking Information with QR Code -->
           <div style="flex: 1;">
-            <p style="font-size: 9pt; margin: 2px 0; color: #333;"><strong>For RELAX PACKERS & MOVERS</strong></p>
-            <p style="font-size: 8pt; margin: 15px 0 0 0; color: #666;">
-              Trusted Service | Safe Handling | On-Time Delivery
+            <!-- QR Code Image -->
+            <div style="text-align: center; margin-bottom: 8px;">
+              ${qrCodeBase64 ?
+                `<img src="${qrCodeBase64}" alt="Scan to Pay ₹1,000" style="width: 80px; height: 80px; border: 1px solid #ddd; border-radius: 4px;" />` :
+                `<div style="width: 80px; height: 80px; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: #f9f9f9; margin: 0 auto;">
+                  <p style="font-size: 7pt; margin: 0; color: #666; text-align: center;">QR Code<br>Not Loaded</p>
+                </div>`
+              }
+            </div>
+            
+            <p style="font-size: 9pt; margin: 2px 0; color: #333; font-weight: bold;">Book Instantly with Our Smart pay</p>
+            <p style="font-size: 8pt; margin: 4px 0 0 0; color: #666; line-height: 1.3;">
+              Secure your preferred moving date by paying a token amount of ₹1,000. 
+              Contact us for payment details.
             </p>
           </div>
           
+          <!-- Right side: Stamp and Signature -->
           <div style="text-align: center;">
             <div style="display: inline-block; text-align: center;">
               ${stampBase64 ?
-      `<img src="${stampBase64}" alt="Company Stamp" style="width: 120px; height: 80px; object-fit: contain;" />` :
-      `<div style="border: 1px solid #999; padding: 12px; background: #f9f9f9; border-radius: 4px;">
+                `<img src="${stampBase64}" alt="Company Stamp" style="width: 120px; height: 80px; object-fit: contain;" />` :
+                `<div style="border: 1px solid #999; padding: 12px; background: #f9f9f9; border-radius: 4px;">
                   <p style="font-size: 8pt; margin: 0; font-weight: bold; color: #333;">COMPANY STAMP</p>
                   <p style="font-size: 7pt; margin: 4px 0 0 0; color: #666;">(Image not loaded)</p>
                 </div>`
-    }
+              }
               <p style="font-size: 7pt; margin: 2px 0 0 0; color: #666;">Authorized Signatory</p>
             </div>
           </div>
@@ -295,13 +371,10 @@ export const generateQuotationPDF = async (quotation) => {
             🏆 Your Trusted Moving Partner Since 2010
           </p>
           <p style="font-size: 8pt; margin: 2px 0; color: #666;">
-            ✨ 5000+ Happy Families | 98% Customer Satisfaction | 🚚 24/7 Customer Support
-          </p>
-          <p style="font-size: 8pt; margin: 2px 0; color: #666;">
             📞 Call Now: +91 97770 12315 | 💬 WhatsApp: +91 97770 12315 | ✉️ Email: bookrelaxpackers@gmail.com
           </p>
           <p style="font-size: 7pt; margin: 3px 0; color: #999; font-style: italic;">
-            "Making Your Move Memorable & Stress-Free" • Generated on ${new Date().toLocaleDateString('en-IN')}
+            "Making Your Move Memorable & Stress-Free" • Fast • Safe • Reliable
           </p>
         </div>
       </div>

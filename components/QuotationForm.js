@@ -16,9 +16,7 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
         transportation: {
             householdGoods: {
                 volume: '',
-                charge: ''
-            },
-            carTransport: {
+                approxDistance: '',
                 charge: ''
             }
         },
@@ -28,7 +26,12 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
             loading: '',
             unloading: '',
             stabilization: '',
-            miscellaneous: ''
+            additionalCharge: '',
+            electricalService: {
+                disconnect: false,
+                reconnect: false,
+                charge: ''
+            }
         },
         taxes: {
             fov: { percentage: '', amount: 0 },
@@ -60,10 +63,8 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                 transportation: {
                     householdGoods: {
                         volume: quotation.transportation?.householdGoods?.volume || '',
+                        approxDistance: quotation.transportation?.householdGoods?.approxDistance || '',
                         charge: quotation.transportation?.householdGoods?.charge?.toString() || ''
-                    },
-                    carTransport: {
-                        charge: quotation.transportation?.carTransport?.charge?.toString() || ''
                     }
                 },
                 services: {
@@ -72,7 +73,12 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                     loading: quotation.services?.loading?.toString() || '',
                     unloading: quotation.services?.unloading?.toString() || '',
                     stabilization: quotation.services?.stabilization?.toString() || '',
-                    miscellaneous: quotation.services?.miscellaneous?.toString() || ''
+                    additionalCharge: quotation.services?.additionalCharge?.toString() || '',
+                    electricalService: {
+                        disconnect: quotation.services?.electricalService?.disconnect || false,
+                        reconnect: quotation.services?.electricalService?.reconnect || false,
+                        charge: quotation.services?.electricalService?.charge?.toString() || ''
+                    }
                 },
                 taxes: {
                     fov: {
@@ -108,9 +114,7 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                 transportation: {
                     householdGoods: {
                         volume: '',
-                        charge: ''
-                    },
-                    carTransport: {
+                        approxDistance: '',
                         charge: ''
                     }
                 },
@@ -120,7 +124,12 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                     loading: '',
                     unloading: '',
                     stabilization: '',
-                    miscellaneous: ''
+                    additionalCharge: '',
+                    electricalService: {
+                        disconnect: false,
+                        reconnect: false,
+                        charge: ''
+                    }
                 },
                 taxes: {
                     fov: { percentage: '', amount: 0 },
@@ -152,8 +161,7 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
         try {
             // Convert all string values to numbers for calculation
             const householdCharge = toNumber(formData.transportation.householdGoods.charge)
-            const carCharge = toNumber(formData.transportation.carTransport.charge)
-            const transportTotal = householdCharge + carCharge
+            const transportTotal = householdCharge
             
             const servicesTotal = 
                 toNumber(formData.services.packing) +
@@ -161,7 +169,8 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                 toNumber(formData.services.loading) +
                 toNumber(formData.services.unloading) +
                 toNumber(formData.services.stabilization) +
-                toNumber(formData.services.miscellaneous)
+                toNumber(formData.services.additionalCharge) +
+                toNumber(formData.services.electricalService.charge)
             
             const subtotal = transportTotal + servicesTotal
 
@@ -236,6 +245,10 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
         }
     }
 
+    const handleCheckboxChange = (path, checked) => {
+        handleInputChange(path, checked)
+    }
+
     const handleSave = async () => {
         if (isSubmitting) return
         
@@ -270,6 +283,14 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                 return
             }
 
+            // Validate electrical service charge if any checkbox is checked
+            if ((formData.services.electricalService.disconnect || formData.services.electricalService.reconnect) && 
+                !formData.services.electricalService.charge) {
+                alert('Please provide Electrical Service Charge amount')
+                setIsSubmitting(false)
+                return
+            }
+
             // Prepare data for API - convert empty strings to 0 for numbers
             const dataToSave = {
                 customer: {
@@ -282,10 +303,8 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                 transportation: {
                     householdGoods: {
                         volume: safeTrim(formData.transportation.householdGoods.volume),
+                        approxDistance: safeTrim(formData.transportation.householdGoods.approxDistance),
                         charge: toNumber(formData.transportation.householdGoods.charge)
-                    },
-                    carTransport: {
-                        charge: toNumber(formData.transportation.carTransport.charge)
                     }
                 },
                 services: {
@@ -294,7 +313,12 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                     loading: toNumber(formData.services.loading),
                     unloading: toNumber(formData.services.unloading),
                     stabilization: toNumber(formData.services.stabilization),
-                    miscellaneous: toNumber(formData.services.miscellaneous)
+                    additionalCharge: toNumber(formData.services.additionalCharge),
+                    electricalService: {
+                        disconnect: formData.services.electricalService.disconnect,
+                        reconnect: formData.services.electricalService.reconnect,
+                        charge: toNumber(formData.services.electricalService.charge)
+                    }
                 },
                 taxes: {
                     fov: { 
@@ -561,13 +585,22 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
                                                 Household Goods
                                             </label>
-                                            <div className="grid grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-3 gap-4">
                                                 <div>
                                                     <input
                                                         type="text"
                                                         placeholder="Volume (e.g., 847.0 FL)"
                                                         value={formData.transportation.householdGoods.volume}
                                                         onChange={(e) => handleInputChange('transportation.householdGoods.volume', e.target.value)}
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                                    />
+                                                </div>
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Approx Distance"
+                                                        value={formData.transportation.householdGoods.approxDistance}
+                                                        onChange={(e) => handleInputChange('transportation.householdGoods.approxDistance', e.target.value)}
                                                         className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
                                                     />
                                                 </div>
@@ -582,18 +615,6 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                                                 </div>
                                             </div>
                                         </div>
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Car Transport Charge
-                                            </label>
-                                            <input
-                                                type="text"
-                                                placeholder="Charge ₹"
-                                                value={formData.transportation.carTransport.charge}
-                                                onChange={(e) => handleNumericInputChange('transportation.carTransport.charge', e.target.value)}
-                                                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
-                                            />
-                                        </div>
                                     </div>
                                 </div>
 
@@ -603,21 +624,73 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                                         <Package size={20} className="text-orange-600" />
                                         Supportive Services
                                     </h3>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {Object.entries(formData.services).map(([key, value]) => (
-                                            <div key={key}>
-                                                <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
-                                                    {key}
+                                    <div className="space-y-4">
+                                        <div className="grid grid-cols-2 gap-4">
+                                            {['packing', 'unpacking', 'loading', 'unloading', 'stabilization'].map((key) => (
+                                                <div key={key}>
+                                                    <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
+                                                        {key}
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="₹ 0"
+                                                        value={formData.services[key]}
+                                                        onChange={(e) => handleNumericInputChange(`services.${key}`, e.target.value)}
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                                    />
+                                                </div>
+                                            ))}
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Additional Charge
                                                 </label>
                                                 <input
                                                     type="text"
                                                     placeholder="₹ 0"
-                                                    value={value}
-                                                    onChange={(e) => handleNumericInputChange(`services.${key}`, e.target.value)}
+                                                    value={formData.services.additionalCharge}
+                                                    onChange={(e) => handleNumericInputChange('services.additionalCharge', e.target.value)}
                                                     className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
                                                 />
                                             </div>
-                                        ))}
+                                        </div>
+                                        
+                                        {/* Electrical Service Section */}
+                                        <div className="border-t pt-4 mt-4">
+                                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                                                Electrical Service Charge
+                                            </label>
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-4">
+                                                    <label className="flex items-center gap-2">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={formData.services.electricalService.disconnect}
+                                                            onChange={(e) => handleCheckboxChange('services.electricalService.disconnect', e.target.checked)}
+                                                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                        />
+                                                        <span className="text-sm text-gray-700">Electrical Disconnect</span>
+                                                    </label>
+                                                    <label className="flex items-center gap-2">
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={formData.services.electricalService.reconnect}
+                                                            onChange={(e) => handleCheckboxChange('services.electricalService.reconnect', e.target.checked)}
+                                                            className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                                        />
+                                                        <span className="text-sm text-gray-700">Electrical Reconnect</span>
+                                                    </label>
+                                                </div>
+                                                <div>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Electrical Service Charge ₹"
+                                                        value={formData.services.electricalService.charge}
+                                                        onChange={(e) => handleNumericInputChange('services.electricalService.charge', e.target.value)}
+                                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -630,7 +703,7 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                                     <div className="grid grid-cols-3 gap-4">
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                FOV (%)
+                                                CGST (%)
                                             </label>
                                             <input
                                                 type="text"
@@ -642,7 +715,7 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Surcharge (%)
+                                                SGST (%)
                                             </label>
                                             <input
                                                 type="text"
@@ -654,7 +727,7 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                                         </div>
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                GST (%)
+                                                IGST (%)
                                             </label>
                                             <input
                                                 type="text"
@@ -686,19 +759,19 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                                         
                                         {totals.fovAmount > 0 && (
                                             <div className="flex justify-between items-center py-1 text-red-600">
-                                                <span>FOV ({toNumber(formData.taxes.fov.percentage)}%):</span>
+                                                <span>CGST ({toNumber(formData.taxes.fov.percentage)}%):</span>
                                                 <span className="font-semibold">₹{totals.fovAmount.toLocaleString('en-IN')}</span>
                                             </div>
                                         )}
                                         {totals.surchargeAmount > 0 && (
                                             <div className="flex justify-between items-center py-1 text-red-600">
-                                                <span>Surcharge ({toNumber(formData.taxes.surcharge.percentage)}%):</span>
+                                                <span>SGST ({toNumber(formData.taxes.surcharge.percentage)}%):</span>
                                                 <span className="font-semibold">₹{totals.surchargeAmount.toLocaleString('en-IN')}</span>
                                             </div>
                                         )}
                                         {totals.gstAmount > 0 && (
                                             <div className="flex justify-between items-center py-1 text-red-600">
-                                                <span>GST ({toNumber(formData.taxes.gst.percentage)}%):</span>
+                                                <span>IGST ({toNumber(formData.taxes.gst.percentage)}%):</span>
                                                 <span className="font-semibold">₹{totals.gstAmount.toLocaleString('en-IN')}</span>
                                             </div>
                                         )}
