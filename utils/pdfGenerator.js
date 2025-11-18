@@ -314,15 +314,14 @@ const [logoBase64, stampBase64, qrCodeBase64] = await Promise.all([
           <!-- Column 1 -->
           <div style="flex: 1;">
             <p style="margin: 4px 0;">• Valid for 30 days from quotation date</p>
-            <p style="margin: 4px 0;">• 20% advance to confirm booking</p>
+            <p style="margin: 4px 0;">• 10% advance to confirm booking</p>
             <p style="margin: 4px 0;">• All packing materials included</p>
             <p style="margin: 4px 0;">• Complete door-to-door service</p>
           </div>
           <!-- Column 2 -->
           <div style="flex: 1;">
-            <p style="margin: 4px 0;">• Insurance up to ₹2,00,000 included</p>
+            <p style="margin: 4px 0;">• Insurance up to ₹1,00,000 , T&C Applied</p>
             <p style="margin: 4px 0;">• Transit: 3-7 business days</p>
-            <p style="margin: 4px 0;">• Professional packing & handling</p>
             <p style="margin: 4px 0;">• Electrical services as requested</p>
           </div>
         </div>

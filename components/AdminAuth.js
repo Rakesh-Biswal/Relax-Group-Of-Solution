@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
+import { Mail, Eye, EyeOff } from 'lucide-react'
 
 export default function AdminAuth({ onLogin }) {
   const [email, setEmail] = useState('')
@@ -10,7 +10,7 @@ export default function AdminAuth({ onLogin }) {
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-    const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -49,8 +49,20 @@ export default function AdminAuth({ onLogin }) {
         className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md"
       >
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Lock className="text-white" size={24} />
+          <div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4 overflow-hidden">
+            <img 
+              src="./images/relax-logo1.png" 
+              alt="Relax Packers & Movers" 
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // Fallback if image fails to load
+                e.target.style.display = 'none'
+                e.target.nextSibling.style.display = 'flex'
+              }}
+            />
+            <div className="w-full h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center hidden">
+              <span className="text-white font-bold text-sm">RPM</span>
+            </div>
           </div>
           <h1 className="text-2xl font-bold text-gray-800">Admin Login</h1>
           <p className="text-gray-600 mt-2">Access your quotation dashboard</p>
@@ -89,7 +101,11 @@ export default function AdminAuth({ onLogin }) {
               Password
             </label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+              <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                <svg fill="currentColor" width="20" height="20" viewBox="0 0 24 24">
+                  <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM12 17c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM15.1 8H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                </svg>
+              </div>
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
@@ -119,13 +135,6 @@ export default function AdminAuth({ onLogin }) {
           </motion.button>
         </form>
 
-        <div className="mt-6 p-4 bg-blue-50 rounded-xl">
-          <p className="text-sm text-blue-700 text-center">
-            Demo Credentials:<br />
-            Email: grouprelaxpackers25@gmail.com<br />
-            Password: grouprelaxpackers25
-          </p>
-        </div>
       </motion.div>
     </div>
   )

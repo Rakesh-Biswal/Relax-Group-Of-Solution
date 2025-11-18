@@ -4,13 +4,14 @@ import { motion } from "framer-motion"
 import { Download, FileText, Search, Loader, CheckCircle, AlertCircle } from "lucide-react"
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { generateQuotationPDF } from '@/utils/pdfGenerator' // Import your existing PDF generator
 
 export default function QuotationDownloadPage() {
     const [quotationId, setQuotationId] = useState("")
     const [loading, setLoading] = useState(false)
     const [status, setStatus] = useState("") // "fetching", "extracting", "creating", "downloading", "success", "error"
     const [error, setError] = useState("")
-    const API_URL = process.env.NEXT_PUBLIC_API_URL
+    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000'
 
     const handleDownload = async (e) => {
         e.preventDefault()
@@ -27,7 +28,7 @@ export default function QuotationDownloadPage() {
         try {
             // Step 1: Fetch quotation data by quotationNumber
             setStatus("fetching")
-
+            
             const response = await fetch(`${API_URL}/api/quotations/number/${quotationId.trim().toUpperCase()}`)
             if (!response.ok) {
                 const errorData = await response.json()
@@ -40,15 +41,14 @@ export default function QuotationDownloadPage() {
             setStatus("extracting")
             await new Promise(resolve => setTimeout(resolve, 800))
 
-            // Step 3: Create PDF
+            // Step 3: Create PDF using your existing utility
             setStatus("creating")
             await new Promise(resolve => setTimeout(resolve, 1200))
 
             // Step 4: Download PDF
             setStatus("downloading")
-            await new Promise(resolve => setTimeout(resolve, 600))
-
-            // Generate and download PDF using your existing function
+            
+            // Use your existing PDF generator utility
             await generateQuotationPDF(quotation)
 
             setStatus("success")
@@ -63,23 +63,6 @@ export default function QuotationDownloadPage() {
         } finally {
             setLoading(false)
         }
-    }
-
-    // Mock PDF generation function (you'll replace this with your actual PDF generator)
-    const generateQuotationPDF = async (quotation) => {
-        // This would be your actual PDF generation logic
-        console.log("Generating PDF for:", quotation)
-
-        // For demo purposes, create a simple PDF download
-        const pdfBlob = new Blob([`Quotation: ${quotation.quotationNumber}`], { type: 'application/pdf' })
-        const url = URL.createObjectURL(pdfBlob)
-        const link = document.createElement('a')
-        link.href = url
-        link.download = `Quotation-${quotation.quotationNumber}.pdf`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-        URL.revokeObjectURL(url)
     }
 
     const getStatusMessage = () => {
@@ -107,7 +90,7 @@ export default function QuotationDownloadPage() {
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50">
             <Header />
 
-            <main className="container mx-auto px-4 py-8 mt-20">
+            <main className="container mx-auto px-4 py-8 ">
                 {/* Hero Section */}
                 <section className="text-center mb-16">
                     <motion.div
@@ -119,11 +102,6 @@ export default function QuotationDownloadPage() {
                             <FileText size={20} />
                             <span className="font-semibold">Download Your Quotation</span>
                         </div>
-
-                        <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-gray-800 via-blue-600 to-cyan-600 bg-clip-text text-transparent mb-6">
-                            Get Your Quotation
-                            <span className="block">PDF Instantly</span>
-                        </h1>
 
                         <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
                             Enter your quotation ID below to download a detailed PDF copy of your quotation.
