@@ -14,8 +14,14 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
             address: ''
         },
         transportation: {
+            type: 'household', // 'household' or 'vehicle'
             householdGoods: {
                 volume: '',
+                approxDistance: '',
+                charge: ''
+            },
+            vehicle: {
+                vehicleType: '',
                 approxDistance: '',
                 charge: ''
             }
@@ -61,10 +67,16 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                     address: quotation.customer?.address || ''
                 },
                 transportation: {
+                    type: quotation.transportation?.type || 'household',
                     householdGoods: {
                         volume: quotation.transportation?.householdGoods?.volume || '',
                         approxDistance: quotation.transportation?.householdGoods?.approxDistance || '',
                         charge: quotation.transportation?.householdGoods?.charge?.toString() || ''
+                    },
+                    vehicle: {
+                        vehicleType: quotation.transportation?.vehicle?.vehicleType || '',
+                        approxDistance: quotation.transportation?.vehicle?.approxDistance || '',
+                        charge: quotation.transportation?.vehicle?.charge?.toString() || ''
                     }
                 },
                 services: {
@@ -112,8 +124,14 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                     address: ''
                 },
                 transportation: {
+                    type: 'household',
                     householdGoods: {
                         volume: '',
+                        approxDistance: '',
+                        charge: ''
+                    },
+                    vehicle: {
+                        vehicleType: '',
                         approxDistance: '',
                         charge: ''
                     }
@@ -161,7 +179,8 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
         try {
             // Convert all string values to numbers for calculation
             const householdCharge = toNumber(formData.transportation.householdGoods.charge)
-            const transportTotal = householdCharge
+            const vehicleCharge = toNumber(formData.transportation.vehicle.charge)
+            const transportTotal = formData.transportation.type === 'household' ? householdCharge : vehicleCharge
             
             const servicesTotal = 
                 toNumber(formData.services.packing) +
@@ -249,6 +268,10 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
         handleInputChange(path, checked)
     }
 
+    const handleTransportTypeChange = (type) => {
+        handleInputChange('transportation.type', type)
+    }
+
     const handleSave = async () => {
         if (isSubmitting) return
         
@@ -283,6 +306,26 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                 return
             }
 
+            // Validate transportation data based on type
+            if (formData.transportation.type === 'household') {
+                if (!formData.transportation.householdGoods.charge) {
+                    alert('Please provide Household Goods charge amount')
+                    setIsSubmitting(false)
+                    return
+                }
+            } else {
+                if (!formData.transportation.vehicle.vehicleType) {
+                    alert('Please provide Vehicle Type')
+                    setIsSubmitting(false)
+                    return
+                }
+                if (!formData.transportation.vehicle.charge) {
+                    alert('Please provide Vehicle charge amount')
+                    setIsSubmitting(false)
+                    return
+                }
+            }
+
             // Validate electrical service charge if any checkbox is checked
             if ((formData.services.electricalService.disconnect || formData.services.electricalService.reconnect) && 
                 !formData.services.electricalService.charge) {
@@ -301,10 +344,16 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                     address: safeTrim(formData.customer.address)
                 },
                 transportation: {
+                    type: formData.transportation.type,
                     householdGoods: {
                         volume: safeTrim(formData.transportation.householdGoods.volume),
                         approxDistance: safeTrim(formData.transportation.householdGoods.approxDistance),
                         charge: toNumber(formData.transportation.householdGoods.charge)
+                    },
+                    vehicle: {
+                        vehicleType: safeTrim(formData.transportation.vehicle.vehicleType),
+                        approxDistance: safeTrim(formData.transportation.vehicle.approxDistance),
+                        charge: toNumber(formData.transportation.vehicle.charge)
                     }
                 },
                 services: {
@@ -581,40 +630,119 @@ export default function QuotationForm({ isOpen, onClose, quotation, onSave, mode
                                         Transportation Charges
                                     </h3>
                                     <div className="space-y-4">
+                                        {/* Transportation Type Selection */}
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                Household Goods
+                                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                                                Transportation Type *
                                             </label>
-                                            <div className="grid grid-cols-3 gap-4">
-                                                <div>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Volume (e.g., 847.0 FL)"
-                                                        value={formData.transportation.householdGoods.volume}
-                                                        onChange={(e) => handleInputChange('transportation.householdGoods.volume', e.target.value)}
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Approx Distance"
-                                                        value={formData.transportation.householdGoods.approxDistance}
-                                                        onChange={(e) => handleInputChange('transportation.householdGoods.approxDistance', e.target.value)}
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
-                                                    />
-                                                </div>
-                                                <div>
-                                                    <input
-                                                        type="text"
-                                                        placeholder="Charge ₹"
-                                                        value={formData.transportation.householdGoods.charge}
-                                                        onChange={(e) => handleNumericInputChange('transportation.householdGoods.charge', e.target.value)}
-                                                        className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
-                                                    />
-                                                </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleTransportTypeChange('household')}
+                                                    className={`p-4 border-2 rounded-xl text-center transition-all duration-200 ${
+                                                        formData.transportation.type === 'household' 
+                                                            ? 'border-blue-500 bg-blue-50 text-blue-700' 
+                                                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                                                    }`}
+                                                >
+                                                    <div className="font-semibold">Household Goods</div>
+                                                    <div className="text-sm mt-1">Furniture, Belongings</div>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleTransportTypeChange('vehicle')}
+                                                    className={`p-4 border-2 rounded-xl text-center transition-all duration-200 ${
+                                                        formData.transportation.type === 'vehicle' 
+                                                            ? 'border-green-500 bg-green-50 text-green-700' 
+                                                            : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                                                    }`}
+                                                >
+                                                    <div className="font-semibold">Vehicle</div>
+                                                    <div className="text-sm mt-1">Car, Bike, etc.</div>
+                                                </button>
                                             </div>
                                         </div>
+
+                                        {/* Household Goods Transportation */}
+                                        {formData.transportation.type === 'household' && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Household Goods Details
+                                                </label>
+                                                <div className="grid grid-cols-3 gap-4">
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Volume (e.g., 847.0 FL)"
+                                                            value={formData.transportation.householdGoods.volume}
+                                                            onChange={(e) => handleInputChange('transportation.householdGoods.volume', e.target.value)}
+                                                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Approx Distance"
+                                                            value={formData.transportation.householdGoods.approxDistance}
+                                                            onChange={(e) => handleInputChange('transportation.householdGoods.approxDistance', e.target.value)}
+                                                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Charge ₹"
+                                                            value={formData.transportation.householdGoods.charge}
+                                                            onChange={(e) => handleNumericInputChange('transportation.householdGoods.charge', e.target.value)}
+                                                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {/* Vehicle Transportation */}
+                                        {formData.transportation.type === 'vehicle' && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                                    Vehicle Details
+                                                </label>
+                                                <div className="grid grid-cols-3 gap-4">
+                                                    <div>
+                                                        <select
+                                                            value={formData.transportation.vehicle.vehicleType}
+                                                            onChange={(e) => handleInputChange('transportation.vehicle.vehicleType', e.target.value)}
+                                                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                                        >
+                                                            <option value="">Select Vehicle</option>
+                                                            <option value="Car">Car</option>
+                                                            <option value="Bike">Bike</option>
+                                                            <option value="Scooter">Scooter</option>
+                                                            <option value="Truck">Truck</option>
+                                                            <option value="Other">Other</option>
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Approx Distance"
+                                                            value={formData.transportation.vehicle.approxDistance}
+                                                            onChange={(e) => handleInputChange('transportation.vehicle.approxDistance', e.target.value)}
+                                                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <input
+                                                            type="text"
+                                                            placeholder="Charge ₹"
+                                                            value={formData.transportation.vehicle.charge}
+                                                            onChange={(e) => handleNumericInputChange('transportation.vehicle.charge', e.target.value)}
+                                                            className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-white"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
 

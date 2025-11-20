@@ -39,7 +39,11 @@ export const generateQuotationPDF = async (quotation) => {
   };
 
   const calculateTotals = () => {
-    const transportTotal = quotation.transportation.householdGoods.charge || 0;
+    // Calculate transport total based on type
+    const transportTotal = quotation.transportation.type === 'household' 
+      ? (quotation.transportation.householdGoods.charge || 0)
+      : (quotation.transportation.vehicle.charge || 0);
+    
     const servicesTotal = 
       (quotation.services.packing || 0) +
       (quotation.services.unpacking || 0) +
@@ -90,11 +94,12 @@ export const generateQuotationPDF = async (quotation) => {
   };
 
   // Load images
-const [logoBase64, stampBase64, qrCodeBase64] = await Promise.all([
-  loadImageAsBase64('https://relaxgroup.in/images/relax-logo-removebg.png'),
-  loadImageAsBase64('./images/relax-brand-stamp.png'),
-  loadImageAsBase64('./images/relax-qr-code.png') // Add your QR code image path
-]);
+  const [logoBase64, stampBase64, qrCodeBase64] = await Promise.all([
+    loadImageAsBase64('https://relaxgroup.in/images/relax-logo-removebg.png'),
+    loadImageAsBase64('./images/relax-brand-stamp.png'),
+    loadImageAsBase64('./images/relax-qr-code.png')
+  ]);
+
   // Build compact PDF HTML content
   pdfContainer.innerHTML = `
     <div style="min-height: 277mm; background: white;">
@@ -174,7 +179,8 @@ const [logoBase64, stampBase64, qrCodeBase64] = await Promise.all([
           Dear <strong>${quotation.customer.gender === 'Male' ? 'Mr.' : 'Ms.'} ${quotation.customer.name}</strong>,
         </p>
         <p style="font-size: 10pt; margin: 6px 0 0 0; line-height: 1.5;">
-          We thank you for your valuable enquiry for transportation of your Household Goods. 
+          We thank you for your valuable enquiry for transportation of your 
+          ${quotation.transportation.type === 'household' ? 'Household Goods' : 'Vehicle'}. 
           We are pleased to quote the rates for the same as under:
         </p>
       </div>
@@ -190,21 +196,31 @@ const [logoBase64, stampBase64, qrCodeBase64] = await Promise.all([
             </tr>
           </thead>
           <tbody>
-            <!-- Household Goods -->
+            <!-- Transportation - Dynamic based on type -->
             <tr>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: center; vertical-align: top;">1</td>
               <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top;">
-                <strong>Household Goods Transportation</strong>
+                <strong>${quotation.transportation.type === 'household' ? 'Household Goods Transportation' : 'Vehicle Transportation'}</strong>
                 <div style="font-size: 8pt; color: #666; margin-top: 4px;">
-                  ${quotation.transportation.householdGoods.volume || quotation.transportation.householdGoods.approxDistance ? `
-                    ${quotation.transportation.householdGoods.volume ? `<span>Volume: ${quotation.transportation.householdGoods.volume}</span>` : ''}
-                    ${quotation.transportation.householdGoods.volume && quotation.transportation.householdGoods.approxDistance ? ' | ' : ''}
-                    ${quotation.transportation.householdGoods.approxDistance ? `<span>Distance: ${quotation.transportation.householdGoods.approxDistance}</span>` : ''}
-                  ` : ''}
+                  ${quotation.transportation.type === 'household' ? 
+                    (quotation.transportation.householdGoods.volume || quotation.transportation.householdGoods.approxDistance ? `
+                      ${quotation.transportation.householdGoods.volume ? `<span>Volume: ${quotation.transportation.householdGoods.volume}</span>` : ''}
+                      ${quotation.transportation.householdGoods.volume && quotation.transportation.householdGoods.approxDistance ? ' | ' : ''}
+                      ${quotation.transportation.householdGoods.approxDistance ? `<span>Distance: ${quotation.transportation.householdGoods.approxDistance}</span>` : ''}
+                    ` : '') :
+                    (quotation.transportation.vehicle.vehicleType || quotation.transportation.vehicle.approxDistance ? `
+                      ${quotation.transportation.vehicle.vehicleType ? `<span>Vehicle: ${quotation.transportation.vehicle.vehicleType}</span>` : ''}
+                      ${quotation.transportation.vehicle.vehicleType && quotation.transportation.vehicle.approxDistance ? ' | ' : ''}
+                      ${quotation.transportation.vehicle.approxDistance ? `<span>Distance: ${quotation.transportation.vehicle.approxDistance}</span>` : ''}
+                    ` : '')
+                  }
                 </div>
               </td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right; vertical-align: top; font-weight: bold;">
-                ${quotation.transportation.householdGoods.charge?.toLocaleString('en-IN')}
+                ${quotation.transportation.type === 'household' 
+                  ? quotation.transportation.householdGoods.charge?.toLocaleString('en-IN')
+                  : quotation.transportation.vehicle.charge?.toLocaleString('en-IN')
+                }
               </td>
             </tr>
 
@@ -213,7 +229,7 @@ const [logoBase64, stampBase64, qrCodeBase64] = await Promise.all([
             <tr>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: center; vertical-align: top;">2</td>
               <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top;">
-                <strong>Ancillary Services</strong>
+                <strong>Additional Services Cost</strong>
                 <div style="font-size: 8pt; margin-top: 4px; color: #555;">
                   ${activeServices.map(([key, value]) => {
                     if (key === 'electricalService') {
@@ -263,7 +279,7 @@ const [logoBase64, stampBase64, qrCodeBase64] = await Promise.all([
               <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
                 ${activeServices.length > 0 ? '3' : '2'}
               </td>
-              <td style="border: 1px solid #ddd; padding: 8px;">FOV @${quotation.taxes.fov.percentage}%</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">CGST @${quotation.taxes.fov.percentage}%</td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${quotation.taxes.fov.amount.toLocaleString('en-IN')}</td>
             </tr>
             ` : ''}
@@ -273,7 +289,7 @@ const [logoBase64, stampBase64, qrCodeBase64] = await Promise.all([
               <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
                 ${activeServices.length > 0 ? '4' : '3'}
               </td>
-              <td style="border: 1px solid #ddd; padding: 8px;">Surcharge @${quotation.taxes.surcharge.percentage}%</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">SGST @${quotation.taxes.surcharge.percentage}%</td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${quotation.taxes.surcharge.amount.toLocaleString('en-IN')}</td>
             </tr>
             ` : ''}
@@ -283,7 +299,7 @@ const [logoBase64, stampBase64, qrCodeBase64] = await Promise.all([
               <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
                 ${activeServices.length > 0 ? '5' : '4'}
               </td>
-              <td style="border: 1px solid #ddd; padding: 8px;">GST @${quotation.taxes.gst.percentage}%</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">IGST @${quotation.taxes.gst.percentage}%</td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right;">${quotation.taxes.gst.amount.toLocaleString('en-IN')}</td>
             </tr>
             ` : ''}

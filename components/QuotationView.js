@@ -27,7 +27,10 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
   }
 
   const calculateTotals = () => {
-    const transportTotal = quotation.transportation.householdGoods.charge || 0
+    const householdCharge = quotation.transportation.householdGoods?.charge || 0
+    const vehicleCharge = quotation.transportation.vehicle?.charge || 0
+    const transportTotal = quotation.transportation.type === 'household' ? householdCharge : vehicleCharge
+    
     const servicesTotal = 
       (quotation.services.packing || 0) +
       (quotation.services.unpacking || 0) +
@@ -62,6 +65,20 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
     (quotation.services.electricalService.disconnect || quotation.services.electricalService.reconnect) &&
     quotation.services.electricalService.charge > 0
 
+  // Get transportation type display name
+  const getTransportationTypeDisplay = () => {
+    return quotation.transportation.type === 'household' ? 'Household Goods' : 'Vehicle'
+  }
+
+  // Get transportation details based on type
+  const getTransportationDetails = () => {
+    if (quotation.transportation.type === 'household') {
+      return quotation.transportation.householdGoods
+    } else {
+      return quotation.transportation.vehicle
+    }
+  }
+
   const handleUpdate = (updatedQuotation) => {
     onUpdate(updatedQuotation)
     setShowEditForm(false)
@@ -78,6 +95,8 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
       setGeneratingPDF(false)
     }
   }
+
+  const transportationDetails = getTransportationDetails()
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -233,16 +252,32 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
                     <p className="text-sm font-medium text-gray-600 mb-1">To</p>
                     <p className="font-semibold text-gray-900">{quotation.toLocation}</p>
                   </div>
-                  {quotation.transportation.householdGoods.volume && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-600 mb-1">Transportation Type</p>
+                    <p className="font-semibold text-gray-900">{getTransportationTypeDisplay()}</p>
+                  </div>
+                  
+                  {/* Household Goods Details */}
+                  {quotation.transportation.type === 'household' && quotation.transportation.householdGoods?.volume && (
                     <div>
                       <p className="text-sm font-medium text-gray-600 mb-1">Household Volume</p>
                       <p className="font-semibold text-gray-900">{quotation.transportation.householdGoods.volume}</p>
                     </div>
                   )}
-                  {quotation.transportation.householdGoods.approxDistance && (
+                  
+                  {/* Vehicle Details */}
+                  {quotation.transportation.type === 'vehicle' && quotation.transportation.vehicle?.vehicleType && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-1">Vehicle Type</p>
+                      <p className="font-semibold text-gray-900">{quotation.transportation.vehicle.vehicleType}</p>
+                    </div>
+                  )}
+                  
+                  {/* Distance (common for both types) */}
+                  {transportationDetails?.approxDistance && (
                     <div>
                       <p className="text-sm font-medium text-gray-600 mb-1">Approx Distance</p>
-                      <p className="font-semibold text-gray-900">{quotation.transportation.householdGoods.approxDistance}</p>
+                      <p className="font-semibold text-gray-900">{transportationDetails.approxDistance}</p>
                     </div>
                   )}
                 </div>
@@ -290,19 +325,39 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
                 
                 <div className="p-6">
                   <div className="space-y-4">
-                    {/* Household Goods */}
+                    {/* Transportation Section */}
                     <div className="flex justify-between items-start py-3 border-b border-gray-100">
                       <div>
-                        <p className="font-semibold text-gray-900">Household Goods Transportation</p>
-                        {quotation.transportation.householdGoods.volume && (
-                          <p className="text-sm text-gray-600 mt-1">Volume: {quotation.transportation.householdGoods.volume}</p>
+                        <p className="font-semibold text-gray-900">
+                          {getTransportationTypeDisplay()} Transportation
+                        </p>
+                        
+                        {/* Household Goods Details */}
+                        {quotation.transportation.type === 'household' && (
+                          <div className="text-sm text-gray-600 mt-1 space-y-1">
+                            {quotation.transportation.householdGoods?.volume && (
+                              <p>Volume: {quotation.transportation.householdGoods.volume}</p>
+                            )}
+                            {quotation.transportation.householdGoods?.approxDistance && (
+                              <p>Distance: {quotation.transportation.householdGoods.approxDistance}</p>
+                            )}
+                          </div>
                         )}
-                        {quotation.transportation.householdGoods.approxDistance && (
-                          <p className="text-sm text-gray-600 mt-1">Distance: {quotation.transportation.householdGoods.approxDistance}</p>
+                        
+                        {/* Vehicle Details */}
+                        {quotation.transportation.type === 'vehicle' && (
+                          <div className="text-sm text-gray-600 mt-1 space-y-1">
+                            {quotation.transportation.vehicle?.vehicleType && (
+                              <p>Vehicle Type: {quotation.transportation.vehicle.vehicleType}</p>
+                            )}
+                            {quotation.transportation.vehicle?.approxDistance && (
+                              <p>Distance: {quotation.transportation.vehicle.approxDistance}</p>
+                            )}
+                          </div>
                         )}
                       </div>
                       <p className="font-bold text-blue-600 text-lg">
-                        ₹{quotation.transportation.householdGoods.charge?.toLocaleString('en-IN')}
+                        ₹{transportationDetails?.charge?.toLocaleString('en-IN') || '0'}
                       </p>
                     </div>
 
@@ -365,19 +420,19 @@ export default function QuotationView({ quotation, onBack, onUpdate }) {
                     <div className="space-y-2">
                       {quotation.taxes.fov.amount > 0 && (
                         <div className="flex justify-between items-center py-2">
-                          <span className="text-gray-700">FOV @{quotation.taxes.fov.percentage}%</span>
+                          <span className="text-gray-700">CGST @{quotation.taxes.fov.percentage}%</span>
                           <span className="font-semibold text-red-600">₹{quotation.taxes.fov.amount.toLocaleString('en-IN')}</span>
                         </div>
                       )}
                       {quotation.taxes.surcharge.amount > 0 && (
                         <div className="flex justify-between items-center py-2">
-                          <span className="text-gray-700">Surcharge @{quotation.taxes.surcharge.percentage}%</span>
+                          <span className="text-gray-700">SGST @{quotation.taxes.surcharge.percentage}%</span>
                           <span className="font-semibold text-red-600">₹{quotation.taxes.surcharge.amount.toLocaleString('en-IN')}</span>
                         </div>
                       )}
                       {quotation.taxes.gst.amount > 0 && (
                         <div className="flex justify-between items-center py-2">
-                          <span className="text-gray-700">GST @{quotation.taxes.gst.percentage}%</span>
+                          <span className="text-gray-700">IGST @{quotation.taxes.gst.percentage}%</span>
                           <span className="font-semibold text-red-600">₹{quotation.taxes.gst.amount.toLocaleString('en-IN')}</span>
                         </div>
                       )}
