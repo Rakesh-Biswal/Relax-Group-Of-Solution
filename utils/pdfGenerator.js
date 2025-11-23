@@ -40,11 +40,11 @@ export const generateQuotationPDF = async (quotation) => {
 
   const calculateTotals = () => {
     // Calculate transport total based on type
-    const transportTotal = quotation.transportation.type === 'household' 
+    const transportTotal = quotation.transportation.type === 'household'
       ? (quotation.transportation.householdGoods.charge || 0)
       : (quotation.transportation.vehicle.charge || 0);
-    
-    const servicesTotal = 
+
+    const servicesTotal =
       (quotation.services.packing || 0) +
       (quotation.services.unpacking || 0) +
       (quotation.services.loading || 0) +
@@ -52,7 +52,7 @@ export const generateQuotationPDF = async (quotation) => {
       (quotation.services.stabilization || 0) +
       (quotation.services.additionalCharge || 0) +
       (quotation.services.electricalService?.charge || 0);
-    
+
     const subtotal = transportTotal + servicesTotal;
 
     return {
@@ -64,12 +64,12 @@ export const generateQuotationPDF = async (quotation) => {
   };
 
   const totals = calculateTotals();
-  
+
   // Filter active services including electrical service
   const activeServices = Object.entries(quotation.services)
     .filter(([key, value]) => {
       if (key === 'electricalService') {
-        return quotation.services.electricalService && 
+        return quotation.services.electricalService &&
           (quotation.services.electricalService.disconnect || quotation.services.electricalService.reconnect) &&
           quotation.services.electricalService.charge > 0;
       }
@@ -202,25 +202,25 @@ export const generateQuotationPDF = async (quotation) => {
               <td style="border: 1px solid #ddd; padding: 8px; vertical-align: top;">
                 <strong>${quotation.transportation.type === 'household' ? 'Household Goods Transportation' : 'Vehicle Transportation'}</strong>
                 <div style="font-size: 8pt; color: #666; margin-top: 4px;">
-                  ${quotation.transportation.type === 'household' ? 
-                    (quotation.transportation.householdGoods.volume || quotation.transportation.householdGoods.approxDistance ? `
+                  ${quotation.transportation.type === 'household' ?
+      (quotation.transportation.householdGoods.volume || quotation.transportation.householdGoods.approxDistance ? `
                       ${quotation.transportation.householdGoods.volume ? `<span>Volume: ${quotation.transportation.householdGoods.volume}</span>` : ''}
                       ${quotation.transportation.householdGoods.volume && quotation.transportation.householdGoods.approxDistance ? ' | ' : ''}
                       ${quotation.transportation.householdGoods.approxDistance ? `<span>Distance: ${quotation.transportation.householdGoods.approxDistance}</span>` : ''}
                     ` : '') :
-                    (quotation.transportation.vehicle.vehicleType || quotation.transportation.vehicle.approxDistance ? `
+      (quotation.transportation.vehicle.vehicleType || quotation.transportation.vehicle.approxDistance ? `
                       ${quotation.transportation.vehicle.vehicleType ? `<span>Vehicle: ${quotation.transportation.vehicle.vehicleType}</span>` : ''}
                       ${quotation.transportation.vehicle.vehicleType && quotation.transportation.vehicle.approxDistance ? ' | ' : ''}
                       ${quotation.transportation.vehicle.approxDistance ? `<span>Distance: ${quotation.transportation.vehicle.approxDistance}</span>` : ''}
                     ` : '')
-                  }
+    }
                 </div>
               </td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right; vertical-align: top; font-weight: bold;">
-                ${quotation.transportation.type === 'household' 
-                  ? quotation.transportation.householdGoods.charge?.toLocaleString('en-IN')
-                  : quotation.transportation.vehicle.charge?.toLocaleString('en-IN')
-                }
+                ${quotation.transportation.type === 'household'
+      ? quotation.transportation.householdGoods.charge?.toLocaleString('en-IN')
+      : quotation.transportation.vehicle.charge?.toLocaleString('en-IN')
+    }
               </td>
             </tr>
 
@@ -232,23 +232,23 @@ export const generateQuotationPDF = async (quotation) => {
                 <strong>Additional Services Cost</strong>
                 <div style="font-size: 8pt; margin-top: 4px; color: #555;">
                   ${activeServices.map(([key, value]) => {
-                    if (key === 'electricalService') {
-                      const electricalService = quotation.services.electricalService;
-                      return `
+      if (key === 'electricalService') {
+        const electricalService = quotation.services.electricalService;
+        return `
                         <div style="display: flex; justify-content: space-between; padding: 2px 0;">
                           <span>
-                            ${electricalService.disconnect && electricalService.reconnect 
-                              ? 'Electrical Disconnect & Reconnect'
-                              : electricalService.disconnect 
-                                ? 'Electrical Disconnect'
-                                : 'Electrical Reconnect'
-                            }
+                            ${electricalService.disconnect && electricalService.reconnect
+            ? 'Electrical Disconnect & Reconnect'
+            : electricalService.disconnect
+              ? 'Electrical Disconnect'
+              : 'Electrical Reconnect'
+          }
                           </span>
                           <span>₹${electricalService.charge.toLocaleString('en-IN')}</span>
                         </div>
                       `;
-                    }
-                    return `
+      }
+      return `
                       <div style="display: flex; justify-content: space-between; padding: 2px 0;">
                         <span style="text-transform: capitalize;">
                           ${key === 'additionalCharge' ? 'Additional Charge' : key.replace(/([A-Z])/g, ' $1').trim()}
@@ -256,7 +256,7 @@ export const generateQuotationPDF = async (quotation) => {
                         <span>₹${value.toLocaleString('en-IN')}</span>
                       </div>
                     `;
-                  }).join('')}
+    }).join('')}
                 </div>
               </td>
               <td style="border: 1px solid #ddd; padding: 8px; text-align: right; vertical-align: top; font-weight: bold;">
@@ -351,11 +351,11 @@ export const generateQuotationPDF = async (quotation) => {
             <!-- QR Code Image -->
             <div style="text-align: center; margin-bottom: 8px;">
               ${qrCodeBase64 ?
-                `<img src="${qrCodeBase64}" alt="Scan to Pay ₹1,000" style="width: 80px; height: 80px; border: 1px solid #ddd; border-radius: 4px;" />` :
-                `<div style="width: 80px; height: 80px; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: #f9f9f9; margin: 0 auto;">
+      `<img src="${qrCodeBase64}" alt="Scan to Pay ₹1,000" style="width: 80px; height: 80px; border: 1px solid #ddd; border-radius: 4px;" />` :
+      `<div style="width: 80px; height: 80px; border: 1px solid #ddd; border-radius: 4px; display: flex; align-items: center; justify-content: center; background: #f9f9f9; margin: 0 auto;">
                   <p style="font-size: 7pt; margin: 0; color: #666; text-align: center;">QR Code<br>Not Loaded</p>
                 </div>`
-              }
+    }
             </div>
             
             <p style="font-size: 9pt; margin: 2px 0; color: #333; font-weight: bold;">Book Instantly with Our Smart pay</p>
@@ -369,12 +369,12 @@ export const generateQuotationPDF = async (quotation) => {
           <div style="text-align: center;">
             <div style="display: inline-block; text-align: center;">
               ${stampBase64 ?
-                `<img src="${stampBase64}" alt="Company Stamp" style="width: 120px; height: 80px; object-fit: contain;" />` :
-                `<div style="border: 1px solid #999; padding: 12px; background: #f9f9f9; border-radius: 4px;">
+      `<img src="${stampBase64}" alt="Company Stamp" style="width: 120px; height: 80px; object-fit: contain;" />` :
+      `<div style="border: 1px solid #999; padding: 12px; background: #f9f9f9; border-radius: 4px;">
                   <p style="font-size: 8pt; margin: 0; font-weight: bold; color: #333;">COMPANY STAMP</p>
                   <p style="font-size: 7pt; margin: 4px 0 0 0; color: #666;">(Image not loaded)</p>
                 </div>`
-              }
+    }
               <p style="font-size: 7pt; margin: 2px 0 0 0; color: #666;">Authorized Signatory</p>
             </div>
           </div>
@@ -434,6 +434,329 @@ export const generateQuotationPDF = async (quotation) => {
   } catch (error) {
     console.error('Error generating PDF:', error);
     throw new Error('Failed to generate PDF');
+  } finally {
+    // Clean up
+    document.body.removeChild(pdfContainer);
+  }
+};
+
+export const generateReceiptPDF = async (receipt) => {
+  if (typeof window === 'undefined') {
+    throw new Error('PDF generation is only available in browser environment');
+  }
+
+  const pdfContainer = document.createElement('div');
+  pdfContainer.style.width = '210mm';
+  pdfContainer.style.minHeight = '297mm';
+  pdfContainer.style.padding = '10mm';
+  pdfContainer.style.backgroundColor = 'white';
+  pdfContainer.style.position = 'absolute';
+  pdfContainer.style.left = '-9999px';
+  pdfContainer.style.top = '0';
+  pdfContainer.style.fontFamily = 'Arial, sans-serif';
+  pdfContainer.style.fontSize = '10pt';
+  pdfContainer.style.lineHeight = '1.3';
+
+  // Format functions
+  const formatIndianRupees = (amount) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+  };
+
+  // Function to load image and return base64 or null
+  const loadImageAsBase64 = async (url) => {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error(`Failed to load image: ${url}`, error);
+      return null;
+    }
+  };
+
+  // Load images
+  const [logoBase64, stampBase64] = await Promise.all([
+    loadImageAsBase64('https://relaxgroup.in/images/relax-logo-removebg.png'),
+    loadImageAsBase64('./images/relax-brand-stamp.png')
+  ]);
+
+  // Build receipt PDF HTML content
+  pdfContainer.innerHTML = `
+    <div style="min-height: 277mm; background: white;">
+      <!-- Header with Logo, Business Info and Receipt Title -->
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 8px; margin-bottom: 15px;">
+        <!-- Left side: Logo and Business Info -->
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: flex-start; gap: 12px;">
+            <!-- Actual Logo -->
+            <div style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; border: ${logoBase64 ? 'none' : '1px solid #ddd'}; background: ${logoBase64 ? 'transparent' : '#f9f9f9'};">
+              ${logoBase64 ?
+      `<img src="${logoBase64}" alt="Relax Packers & Movers" style="width: 100%; height: 100%; object-fit: contain;" />` :
+      `<div style="text-align: center;">
+                  <div style="font-size: 8pt; color: #666;">LOGO</div>
+                  <div style="font-size: 6pt; color: #999;">(Image not loaded)</div>
+                </div>`
+    }
+            </div>
+            
+            <!-- Business Information -->
+            <div style="flex: 1;">
+              <h2 style="font-size: 15pt; font-weight: bold; margin: 0 0 5px 0; color: #000;">RELAX PACKERS & MOVERS</h2>
+              <p style="font-size: 9pt; margin: 2px 0; color: #666;">
+                Registered Office: Cuttack, Odisha - 753014
+              </p>
+              <p style="font-size: 9pt; margin: 2px 0; color: #666;">
+                Phone: +91 97770 12315 | Email: bookrelaxpackers@gmail.com
+              </p>
+              <p style="font-size: 8pt; margin: 2px 0; color: #999;">
+                GST IN: 21BUQPN8897R1Z8
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right side: Receipt Title -->
+        <div style="text-align: right;">
+          <h2 style="font-size: 18pt; font-weight: bold; margin: 0; color: #000;">MONEY RECEIPT</h2>
+          <p style="font-size: 10pt; margin: 3px 0; color: #333;">Ref: ${receipt.receiptNumber}</p>
+          <p style="font-size: 10pt; margin: 3px 0; color: #333;">Date: ${formatDate(receipt.receiptDate)}</p>
+        </div>
+      </div>
+
+      <!-- Customer Details -->
+      <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+        <!-- Left side: Customer Information -->
+        <div style="flex: 1;">
+          <h3 style="font-size: 11pt; font-weight: bold; margin: 0 0 5px 0; display: inline-block;">Received From</h3>
+          <div style="padding: 8px 0;">
+            <p style="font-size: 10pt; margin: 4px 0; font-weight: bold;">
+              ${receipt.customer.gender === 'Male' ? 'Mr.' : 'Ms.'} ${receipt.customer.name}
+            </p>
+            <p style="font-size: 9pt; margin: 3px 0; line-height: 1.3;">${receipt.customer.address}</p>
+            <p style="font-size: 9pt; margin: 3px 0;">📞 ${receipt.customer.phone}</p>
+            ${receipt.customer.email ? `<p style="font-size: 9pt; margin: 3px 0;">✉️ ${receipt.customer.email}</p>` : ''}
+          </div>
+        </div>
+        
+        <!-- Right side: Service Details -->
+        <div style="flex: 1; text-align: right;">
+          <div style="display: inline-block; text-align: left;">
+            <div style="margin-bottom: 8px;">
+              <p style="font-size: 10pt; margin: 0 0 2px 0; font-weight: bold; color: #333;">Service:</p>
+              <p style="font-size: 9pt; margin: 0; color: #666;">Packers & Movers Service</p>
+            </div>
+            <div style="margin-bottom: 8px;">
+              <p style="font-size: 10pt; margin: 0 0 2px 0; font-weight: bold; color: #333;">Route:</p>
+              <p style="font-size: 9pt; margin: 0; color: #666;">${receipt.fromLocation} to ${receipt.toLocation}</p>
+            </div>
+            <div>
+              <p style="font-size: 10pt; margin: 0 0 2px 0; font-weight: bold; color: #333;">Service Date:</p>
+              <p style="font-size: 9pt; margin: 0; color: #666;">${formatDate(receipt.serviceDate)}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Summary - Personalized Message -->
+      <div style="margin-bottom: 18px; padding: 12px; background: #f0f8f0; border-left: 4px solid #28a745; border-radius: 0 4px 4px 0;">
+        <p style="font-size: 10pt; margin: 0; line-height: 1.4;">
+          Dear <strong>${receipt.customer.gender === 'Male' ? 'Mr.' : 'Ms.'} ${receipt.customer.name}</strong>,
+        </p>
+        <p style="font-size: 10pt; margin: 6px 0 0 0; line-height: 1.5;">
+          We extend our heartfelt gratitude for your trust in <strong>Relax Packers & Movers</strong>. 
+          This receipt confirms the successful ${receipt.receiptType.toLowerCase()} of 
+          <strong> ₹${receipt.receivedAmount?.toLocaleString('en-IN')}</strong> 
+          through <strong>${receipt.paymentMode}</strong> for your upcoming relocation service from 
+          <strong> ${receipt.fromLocation}</strong> to <strong>${receipt.toLocation}</strong>.
+        </p>
+      </div>
+
+      <!-- Payment Details Table -->
+      <div style="margin-bottom: 15px;">
+        <table style="width: 100%; border-collapse: collapse; font-size: 9pt; border: 1px solid #ccc; margin-top: 5px;">
+          <thead>
+            <tr style="background: #f8f8f8;">
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold; width: 30%;">Particulars</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold; width: 40%;">Description</th>
+              <th style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; width: 30%;">Amount (₹)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Total Amount -->
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Total Service Amount</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">Complete Packers & Movers Service</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">
+                ${receipt.totalAmount?.toLocaleString('en-IN')}
+              </td>
+            </tr>
+
+            <!-- Receipt Type -->
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Payment Type</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">${receipt.receiptType}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"></td>
+            </tr>
+
+            <!-- Payment Mode -->
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Payment Mode</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">${receipt.paymentMode}</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"></td>
+            </tr>
+
+            <!-- Received Amount -->
+            <tr style="background: #e8f5e8;">
+              <td style="border: 1px solid #ddd; padding: 10px; font-weight: bold; font-size: 10pt;">Amount Received</td>
+              <td style="border: 1px solid #ddd; padding: 10px; font-size: 10pt;">${receipt.receiptType} Payment</td>
+              <td style="border: 1px solid #ddd; padding: 10px; text-align: right; font-weight: bold; font-size: 11pt; color: #28a745;">
+                ₹${receipt.receivedAmount?.toLocaleString('en-IN')}
+              </td>
+            </tr>
+
+            <!-- Balance Amount (if any) -->
+            ${receipt.receivedAmount < receipt.totalAmount ? `
+            <tr>
+              <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">Balance Amount</td>
+              <td style="border: 1px solid #ddd; padding: 8px;">Pending Payment</td>
+              <td style="border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold; color: #dc3545;">
+                ₹${(receipt.totalAmount - receipt.receivedAmount).toLocaleString('en-IN')}
+              </td>
+            </tr>
+            ` : ''}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Payment Status -->
+      <div style="margin-bottom: 15px; text-align: center;">
+        <div style="display: inline-block; padding: 8px 20px; background: ${receipt.receivedAmount >= receipt.totalAmount ? '#28a745' : '#ffc107'}; color: white; border-radius: 20px; font-weight: bold;">
+          ${receipt.receivedAmount >= receipt.totalAmount ? 'FULL PAYMENT RECEIVED' : 'PARTIAL PAYMENT RECEIVED'}
+        </div>
+        ${receipt.receivedAmount < receipt.totalAmount ? `
+        <p style="font-size: 9pt; margin: 8px 0 0 0; color: #666;">
+          Balance of ₹${(receipt.totalAmount - receipt.receivedAmount).toLocaleString('en-IN')} to be paid before service commencement
+        </p>
+        ` : ''}
+      </div>
+
+      <!-- Additional Notes Section -->
+      ${receipt.notes ? `
+      <div style="margin-bottom: 15px; padding: 10px; background: #fff8e1; border: 1px solid #ffd54f; border-radius: 4px;">
+        <h3 style="font-size: 11pt; font-weight: bold; margin: 0 0 6px 0; color: #e65100;">Payment Notes</h3>
+        <p style="font-size: 9pt; margin: 0; line-height: 1.4; color: #5d4037;">${receipt.notes}</p>
+      </div>
+      ` : ''}
+
+      <!-- Terms & Conditions -->
+      <div style="margin-bottom: 15px;">
+        <h3 style="font-size: 12pt; font-weight: bold; margin: 0 0 8px 0;">PAYMENT TERMS</h3>
+        <div style="font-size: 9pt; line-height: 1.4;">
+          <p style="margin: 4px 0;">• This receipt is valid for accounting purposes only</p>
+          <p style="margin: 4px 0;">• Service will be scheduled upon receipt of advance payment</p>
+          <p style="margin: 4px 0;">• Balance amount to be paid before service commencement</p>
+          <p style="margin: 4px 0;">• Cancellation charges apply as per company policy</p>
+          <p style="margin: 4px 0;">• Receipt must be presented for any service queries</p>
+        </div>
+      </div>
+
+      <!-- Footer with Stamp and Signature -->
+      <div style="border-top: 1px solid #ddd; padding-top: 12px; margin-top: 15px;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+          <!-- Left side: Payment Confirmation -->
+          <div style="flex: 1;">
+            <p style="font-size: 9pt; margin: 2px 0; color: #333; font-weight: bold;">Payment Confirmed & Verified</p>
+            <p style="font-size: 8pt; margin: 4px 0 0 0; color: #666; line-height: 1.3;">
+              This computer generated receipt is valid without signature.<br>
+              For any payment related queries, contact: +91 97770 12315
+            </p>
+          </div>
+          
+          <!-- Right side: Stamp and Signature -->
+          <div style="text-align: center;">
+            <div style="display: inline-block; text-align: center;">
+              ${stampBase64 ?
+      `<img src="${stampBase64}" alt="Company Stamp" style="width: 120px; height: 80px; object-fit: contain;" />` :
+      `<div style="border: 1px solid #999; padding: 12px; background: #f9f9f9; border-radius: 4px;">
+                  <p style="font-size: 8pt; margin: 0; font-weight: bold; color: #333;">COMPANY STAMP</p>
+                  <p style="font-size: 7pt; margin: 4px 0 0 0; color: #666;">(Image not loaded)</p>
+                </div>`
+    }
+              <p style="font-size: 7pt; margin: 2px 0 0 0; color: #666;">Authorized Signatory</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Marketing Footer -->
+        <div style="text-align: center; margin-top: 20px; border-top: 1px solid #eee; padding-top: 10px; background: linear-gradient(to right, #f9f9f9, #fff, #f9f9f9);">
+          <p style="font-size: 9pt; margin: 3px 0; color: #000; font-weight: bold;">
+            🏆 Your Trusted Moving Partner Since 2010
+          </p>
+          <p style="font-size: 8pt; margin: 2px 0; color: #666;">
+            📞 Call Now: +91 97770 12315 | 💬 WhatsApp: +91 97770 12315 | ✉️ Email: bookrelaxpackers@gmail.com
+          </p>
+          <p style="font-size: 7pt; margin: 3px 0; color: #999; font-style: italic;">
+            "Thank you for choosing Relax Packers & Movers" • Fast • Safe • Reliable
+          </p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Add to document
+  document.body.appendChild(pdfContainer);
+
+  try {
+    // Convert to canvas with higher scale for better quality
+    const canvas = await html2canvas(pdfContainer, {
+      scale: 3,
+      useCORS: true,
+      logging: false,
+      width: pdfContainer.offsetWidth,
+      height: pdfContainer.offsetHeight,
+      windowWidth: pdfContainer.scrollWidth,
+      windowHeight: pdfContainer.scrollHeight,
+      backgroundColor: '#ffffff',
+      useCORS: true,
+      allowTaint: true
+    });
+
+    // Create PDF
+    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    const imgWidth = 210;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    // Add image to PDF
+    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+    // Save PDF
+    pdf.save(`Receipt-${receipt.receiptNumber}.pdf`);
+
+  } catch (error) {
+    console.error('Error generating receipt PDF:', error);
+    throw new Error('Failed to generate receipt PDF');
   } finally {
     // Clean up
     document.body.removeChild(pdfContainer);
