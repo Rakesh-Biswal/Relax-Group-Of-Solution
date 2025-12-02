@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from "next/image"
-import { MapPin, ChevronDown, Menu, X } from "lucide-react"
+import { MapPin, ChevronDown, Menu, X, Download } from "lucide-react"
 import { Home, DollarSign, Info, FileText, Award, Map, Users, MessageSquare } from "lucide-react";
 import IntroAnimation from './ui/IntroAnimation'
 import Link from 'next/link'
@@ -15,6 +15,7 @@ export default function Header() {
   const menuItems = [
     { label: "Home", href: "/", icon: <Home size={18} /> },
     { label: "Get Free Quote", href: "/pricing", icon: <DollarSign size={18} /> },
+    { label: "Download Quotation / Receipt", href: "/download-quotation", icon: <Download size={18} /> },
     { label: "About Us", href: "/about", icon: <Info size={18} /> },
     { label: "Our Blogs", href: "/blog", icon: <Award size={18} /> },
     { label: "Our Achievements", href: "/achievement", icon: <Award size={18} /> },
