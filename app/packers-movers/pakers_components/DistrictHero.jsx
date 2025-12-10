@@ -74,7 +74,7 @@ export default function DistrictHero({ districtName, description, phone }) {
             transition={{ delay: 0.3 }}
             className="text-5xl md:text-6xl font-bold mb-6 leading-tight"
           >
-            <span className="text-gray-900">Fastest & Safest</span>
+            <span className="text-gray-900">Fastest </span>
             <br />
             <span className="bg-gradient-to-r from-[#a4723d] to-[#c8935a] bg-clip-text text-transparent">
               Delivery Across {districtName}
@@ -127,7 +127,7 @@ export default function DistrictHero({ districtName, description, phone }) {
               whileTap={{ scale: 0.95 }}
               className="px-8 py-4 bg-[#a4723d] text-white font-semibold rounded-lg shadow-lg hover:bg-[#8d5f2f] transition flex items-center gap-2"
             >
-              📞 Call and Book Your Delivery Now
+              📞 Call and Book
               <span>→</span>
             </motion.a>
 

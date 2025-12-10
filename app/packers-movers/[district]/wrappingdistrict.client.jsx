@@ -30,7 +30,7 @@ export default function DistrictClientPage({ params }) {
       const district = params.district
       const name = district.charAt(0).toUpperCase() + district.slice(1)
       setDistrictName(name)
-      setDescription(`Need packers and movers in ${name} right now? Get up to 30% OFF on your first booking with Relax Packers & Movers! We provide fast packing, safe handling, GPS-enabled transport, and same-day shifting support. With 15 years of expertise across Odisha, we are trusted by thousands for reliable, damage-free, and affordable relocation. Call now and experience the fastest, safest way to move!`)
+      setDescription(`Need packers and movers in ${name} right now? Get up to 30% OFF on your first booking with Relax Packers & Movers! We provide fast packing, safe handling, GPS-enabled transport, and same-day shifting support. Call now and experience the fastest, safest way to move!`)
     }
   }, [params.district])
 
