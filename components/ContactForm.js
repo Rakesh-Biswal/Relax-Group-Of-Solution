@@ -449,106 +449,51 @@ export default function ChatForm() {
     addBotMessage(finalMessage)
 
     try {
-      // Prepare Brevo email payload
-      const emailPayload = {
-        sender: {
-          name: "Relax Packers Website",
-          email: "rb2306114@gmail.com"
-        },
-        to: [
-          {
-            email: "bookrelaxpackers@gmail.com",
-            name: "Relax Packers Team"
-          }
-        ],
-        subject: `New Moving Inquiry from ${formData.name}`,
-        htmlContent: `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <style>
-              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-              .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-              .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-              .content { background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px; }
-              .detail { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #667eea; }
-              .footer { text-align: center; margin-top: 20px; color: #666; font-size: 14px; }
-              .route { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #ff7e5f; display: flex; align-items: center; }
-              .route-icon { font-size: 24px; margin-right: 10px; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>🚚 New Moving Inquiry</h1>
-                <p>You have received a new moving request from your website</p>
-              </div>
-              <div class="content">
-                <div class="detail">
-                  <strong>👤 Customer Name:</strong> ${formData.name}
-                </div>
-                <div class="detail">
-                  <strong>📞 Phone Number:</strong> ${formData.phone}
-                </div>
-                <div class="detail">
-                  <strong>🏠 Property Type:</strong> ${formData.houseType}
-                </div>
-                <div class="route">
-                  <span class="route-icon">📍</span>
-                  <div>
-                    <strong>Moving From:</strong> ${formData.fromLocation}<br>
-                    <strong>Moving To:</strong> ${formData.toLocation}
-                  </div>
-                </div>
-                ${formData.additionalDetails ? `
-                <div class="detail">
-                  <strong>📝 Additional Details:</strong> ${formData.additionalDetails}
-                </div>
-                ` : ''}
-                <div class="footer">
-                  <p>This inquiry was submitted through relaxpackers.com</p>
-                  <p>📍 Relax Packers & Movers - Your Trusted Moving Partner</p>
-                </div>
-              </div>
-            </div>
-          </body>
-          </html>
-        `
-      }
+      // Prepare WhatsApp message
+      const whatsappMessage = `🚚 *New Moving Inquiry from Relax Packers Website* 🚚
 
-      // Send email using Brevo API
-      const response = await fetch("https://api.brevo.com/v3/smtp/email", {
-        method: "POST",
-        headers: {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          "api-key": process.env.NEXT_PUBLIC_BREVO_API_KEY,
-        },
-        body: JSON.stringify(emailPayload),
-      })
+*Customer Details:*
+👤 *Name:* ${formData.name}
+📞 *Phone:* ${formData.phone}
+🏠 *Property Type:* ${formData.houseType}
 
-      if (response.ok) {
-        setStatus("success")
-        const successMessage = isOdia ? 
-          "✅ ଅତି ଭଲ! ଆପଣଙ୍କର ଅନୁରୋଧ ସଫଳତାର ସହିତ ଜମା ହୋଇଛି। ଆମେ 30 ମିନିଟ୍ ମଧ୍ୟରେ ଆପଣଙ୍କୁ ଆପଣଙ୍କର କୋଟ୍ ସହିତ ଯୋଗାଯୋଗ କରିବା!" : 
-          "✅ Great! Your request has been submitted successfully. We'll contact you within 30 minutes with your personalized quote."
-        
-        addBotMessage(successMessage)
-        setTimeout(() => setShowPopup(true), 1500)
-      } else {
-        setStatus("error")
-        const errorMessage = isOdia ? 
-          "❌ ଦୁଃଖିତ, ଆପଣଙ୍କ ଅନୁରୋଧ ଜମା କରିବାରେ ତ୍ରୁଟି ଘଟିଛି। ଦୟାକରି ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ କିମ୍ବା ଆମକୁ ସିଧାସଳଖ ଡାକନ୍ତୁ!" : 
-          "❌ Sorry, there was an error submitting your request. Please try again or call us directly."
-        
-        addBotMessage(errorMessage)
-      }
+*Moving Route:*
+📍 *From:* ${formData.fromLocation}
+🎯 *To:* ${formData.toLocation}
+
+${formData.additionalDetails ? `📝 *Additional Details:* ${formData.additionalDetails}\n` : ''}
+*Submitted via:* https://packers.relaxgroup.in
+*Time:* ${new Date().toLocaleString()}`;
+
+      // Encode the message for URL
+      const encodedMessage = encodeURIComponent(whatsappMessage);
+      
+      // WhatsApp phone number
+      const whatsappNumber = "+919777012315";
+      
+      // Create WhatsApp URL
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
+      
+      // Open WhatsApp in new tab
+      setTimeout(() => {
+        window.open(whatsappUrl, '_blank');
+      }, 1500);
+
+      // Show success message
+      setStatus("success")
+      const successMessage = isOdia ? 
+        "✅ ଅତି ଭଲ! ଆପଣଙ୍କର ଅନୁରୋଧ ସଫଳତାର ସହିତ ଜମା ହୋଇଛି। ଆପଣଙ୍କୁ ଆମ Whatsapp ନମ୍ବରକୁ ରିଡାଇରେକ୍ଟ କରାଯାଉଛି..." : 
+        "✅ Great! Your request has been submitted successfully. Redirecting you to our WhatsApp number..."
+      
+      addBotMessage(successMessage)
+      setTimeout(() => setShowPopup(true), 1500)
+      
     } catch (error) {
-      console.error("Error sending email:", error)
+      console.error("Error preparing WhatsApp message:", error)
       setStatus("error")
       const errorMessage = isOdia ? 
-        "❌ ଦୁଃଖିତ, ଆପଣଙ୍କ ଅନୁରୋଧ ଜମା କରିବାରେ ତ୍ରୁଟି ଘଟିଛି। ଦୟାକରି ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ!" : 
-        "❌ Sorry, there was an error submitting your request. Please try again."
+        "❌ ଦୁଃଖିତ, ଆପଣଙ୍କ ଅନୁରୋଧ ଜମା କରିବାରେ ତ୍ରୁଟି ଘଟିଛି। ଦୟାକରି ପୁନର୍ବାର ଚେଷ୍ଟା କରନ୍ତୁ କିମ୍ବା ଆମକୁ ସିଧାସଳଖ ଡାକନ୍ତୁ!" : 
+        "❌ Sorry, there was an error submitting your request. Please try again or call us directly."
       
       addBotMessage(errorMessage)
     } finally {
