@@ -23,6 +23,7 @@ export default function Header() {
     { label: "Our Trusted Partners", href: "/partners", icon: <Users size={18} /> },
     { label: "Feedback", href: "/feedback", icon: <MessageSquare size={18} /> },
     { label: "Terms & Conditions", href: "/terms", icon: <FileText size={18} /> },
+    { label: "Admin", href: "/admin", icon: <FileText size={18} /> },
   ];
 
   // Handle scroll effect for header
