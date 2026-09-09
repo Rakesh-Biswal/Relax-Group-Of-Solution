@@ -1,339 +1,147 @@
-"use client";
+import Link from "next/link"
+import SiteHeader from "@/components/site/SiteHeader"
+import SiteFooter from "@/components/site/SiteFooter"
+import { PageHero } from "@/components/site/Blocks"
+import PrintButton from "@/components/site/PrintButton"
+import { SITE } from "@/lib/site"
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import Footer from "@/components/Footer";
-import { ChevronLeft, Printer, ChevronDown, ChevronUp } from "lucide-react";
-
-const sections = [
-    { id: "agreement", title: "Service Agreement" },
-    { id: "booking", title: "Booking & Payment" },
-    { id: "customer", title: "Customer Responsibilities" },
-    { id: "insurance", title: "Insurance & Liability" },
-    { id: "cancellation", title: "Cancellation & Refund" },
-    { id: "delays", title: "Delays & Rescheduling" },
-    { id: "prohibited", title: "Prohibited Items" },
-    { id: "privacy", title: "Privacy Policy" },
-    { id: "dispute", title: "Dispute Resolution" },
-    { id: "contact", title: "Contact Information" },
-];
-
-export default function TermsPage() {
-    const router = useRouter();
-    // track which accordion is open; default all open in large screens? We'll close by default
-    const [openAccordion, setOpenAccordion] = useState(null);
-
-    const toggleAccordion = (id) => {
-        setOpenAccordion((prev) => (prev === id ? null : id));
-        // smooth scroll to section anchor on toggle for better UX
-        const el = document.getElementById(id);
-        if (el) {
-            setTimeout(() => {
-                el.scrollIntoView({ behavior: "smooth", block: "start" });
-            }, 100);
-        }
-    };
-
-    const handlePrint = () => window.print();
-
-    return (
-        <div className="flex flex-col min-h-screen bg-neutral-50 text-neutral-900">
-            {/* Page header */}
-            <header className="bg-white shadow-sm">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <button
-                            type="button"
-                            onClick={() => router.back()}
-                            className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium bg-white border border-gray-200 hover:bg-gray-50 shadow-sm"
-                        >
-                            <ChevronLeft size={16} />
-                            Back
-                        </button>
-
-                        <div>
-                            <h1 className="text-xl sm:text-2xl font-bold">Terms &amp; Conditions</h1>
-                            <p className="text-sm text-gray-600">Relax Packers &amp; Movers</p>
-                        </div>
-                    </div>
-
-                    
-                </div>
-            </header>
-
-            {/* Main content area with TOC */}
-            <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-                    {/* TOC / Sidebar */}
-                    <aside className="md:col-span-3">
-                        <nav className="sticky top-24 hidden md:block">
-                            <div className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
-                                <h3 className="text-sm font-semibold text-gray-700 mb-3">On this page</h3>
-                                <ul className="space-y-2 text-sm">
-                                    {sections.map((s) => (
-                                        <li key={s.id}>
-                                            <a
-                                                href={`#${s.id}`}
-                                                className="block p-2 rounded-md hover:bg-gray-50 text-gray-700"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    const el = document.getElementById(s.id);
-                                                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                                                }}
-                                            >
-                                                {s.title}
-                                            </a>
-                                        </li>
-                                    ))}
-                                </ul>
-                                <div className="mt-4 text-xs text-gray-500">
-                                    Last updated: <span className="font-medium">{new Date().getFullYear()}</span>
-                                </div>
-                            </div>
-
-                            <div className="mt-4">
-                                <a
-                                    href="#contact"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        const el = document.getElementById("contact");
-                                        if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                                    }}
-                                    className="block w-full text-center px-3 py-2 rounded-md bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-semibold shadow"
-                                >
-                                    Contact Us
-                                </a>
-                            </div>
-                        </nav>
-
-                        {/* Mobile TOC quick actions */}
-                        <div className="md:hidden mb-6">
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={handlePrint}
-                                    className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md border bg-white"
-                                >
-                                    <Printer size={14} /> Print
-                                </button>
-                                <button
-                                    onClick={() => router.back()}
-                                    className="flex-1 inline-flex items-center justify-center gap-2 px-3 py-2 rounded-md border bg-white"
-                                >
-                                    <ChevronLeft size={14} /> Back
-                                </button>
-                            </div>
-                        </div>
-                    </aside>
-
-                    {/* Terms content */}
-                    <section className="md:col-span-9">
-                        <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-6">
-                            <div className="prose max-w-none">
-                                <p className="text-sm text-gray-600 mb-4">
-                                    These Terms &amp; Conditions govern your use of Relax Packers &amp; Movers services.
-                                    By booking or using our services, you accept these terms in full. If you do not agree,
-                                    please refrain from using our services.
-                                </p>
-
-                                {/* Each section rendered as accordion + anchored heading */}
-                                <ArticleSection
-                                    id="agreement"
-                                    title="1. Service Agreement"
-                                    open={openAccordion === "agreement"}
-                                    onToggle={() => toggleAccordion("agreement")}
-                                >
-                                    <p>
-                                        Relax Packers &amp; Movers provides professional packing, loading, transportation,
-                                        unloading and unpacking services. When you confirm a booking, you enter into a
-                                        service agreement with Relax Packers &amp; Movers under these Terms &amp; Conditions.
-                                    </p>
-                                </ArticleSection>
-
-                                <ArticleSection
-                                    id="booking"
-                                    title="2. Booking & Payment"
-                                    open={openAccordion === "booking"}
-                                    onToggle={() => toggleAccordion("booking")}
-                                >
-                                    <p>
-                                        Booking confirmation is subject to receipt of advance payment or written
-                                        confirmation from our team. The outstanding balance must be settled before
-                                        delivery unless otherwise agreed. We accept cash, UPI, bank transfers and other
-                                        agreed payment methods. Payment terms will be communicated during booking.
-                                    </p>
-                                </ArticleSection>
-
-                                <ArticleSection
-                                    id="customer"
-                                    title="3. Customer Responsibilities"
-                                    open={openAccordion === "customer"}
-                                    onToggle={() => toggleAccordion("customer")}
-                                >
-                                    <p>
-                                        Customers must provide accurate details about the items to be moved, pickup and
-                                        drop locations, and any access constraints (stairs, elevators, parking limits,
-                                        narrow gates). Failure to disclose may lead to additional charges or delays.
-                                    </p>
-                                </ArticleSection>
-
-                                <ArticleSection
-                                    id="insurance"
-                                    title="4. Insurance & Liability"
-                                    open={openAccordion === "insurance"}
-                                    onToggle={() => toggleAccordion("insurance")}
-                                >
-                                    <p>
-                                        While reasonable care is exercised during packing and transit, Relax Packers &amp; Movers
-                                        is not liable for loss or damage resulting from natural disasters, accidents,
-                                        third-party carriers, inadequate packing by the customer, or events beyond our control.
-                                        We recommend opting for transit insurance for high-value items.
-                                    </p>
-                                </ArticleSection>
-
-                                <ArticleSection
-                                    id="cancellation"
-                                    title="5. Cancellation & Refund"
-                                    open={openAccordion === "cancellation"}
-                                    onToggle={() => toggleAccordion("cancellation")}
-                                >
-                                    <p>
-                                        Cancellations should be communicated at least 24 hours before the scheduled move.
-                                        Refunds, if applicable, will be processed after deducting administrative or booking charges.
-                                        Late cancellations may attract partial or no refunds depending on costs already incurred.
-                                    </p>
-                                </ArticleSection>
-
-                                <ArticleSection
-                                    id="delays"
-                                    title="6. Delays & Rescheduling"
-                                    open={openAccordion === "delays"}
-                                    onToggle={() => toggleAccordion("delays")}
-                                >
-                                    <p>
-                                        We strive to meet agreed schedules, but delays due to traffic, weather, strikes,
-                                        or other unforeseen circumstances are possible. In such cases, we will keep you informed
-                                        and work with you to reschedule if required.
-                                    </p>
-                                </ArticleSection>
-
-                                <ArticleSection
-                                    id="prohibited"
-                                    title="7. Prohibited Items"
-                                    open={openAccordion === "prohibited"}
-                                    onToggle={() => toggleAccordion("prohibited")}
-                                >
-                                    <p>
-                                        Transport of hazardous materials, explosives, flammable liquids, perishable items,
-                                        illegal goods, and other restricted items is strictly prohibited. We reserve the right to
-                                        refuse carriage of such items.
-                                    </p>
-                                </ArticleSection>
-
-                                <ArticleSection
-                                    id="privacy"
-                                    title="8. Privacy Policy"
-                                    open={openAccordion === "privacy"}
-                                    onToggle={() => toggleAccordion("privacy")}
-                                >
-                                    <p>
-                                        We collect personal information necessary to provide our services. Your data is processed
-                                        and stored securely and will not be shared with third parties except as required to fulfill
-                                        the service (e.g., transport partners) or by law. Please refer to our full privacy policy
-                                        for details.
-                                    </p>
-                                </ArticleSection>
-
-                                <ArticleSection
-                                    id="dispute"
-                                    title="9. Dispute Resolution"
-                                    open={openAccordion === "dispute"}
-                                    onToggle={() => toggleAccordion("dispute")}
-                                >
-                                    <p>
-                                        We will attempt to resolve disputes amicably. Unresolved disputes may be referred to
-                                        arbitration or the courts located in Odisha, India, and governed by Indian law.
-                                    </p>
-                                </ArticleSection>
-
-                                <ArticleSection
-                                    id="contact"
-                                    title="10. Contact Information"
-                                    open={openAccordion === "contact"}
-                                    onToggle={() => toggleAccordion("contact")}
-                                >
-                                    <p>
-                                        For queries, support or claims contact us:
-                                    </p>
-                                    <ul>
-                                        <li>📧 Email: <a href="mailto:support@relaxgroup.in" className="text-blue-600 underline">support@relaxgroup.in</a></li>
-                                        <li>📞 Phone: <a href="tel:+919777012315" className="text-blue-600 underline">+91 97770 12315</a></li>
-                                        <li>🌐 Website: <a href="https://packers.relaxgroup.in" target="_blank" rel="noreferrer" className="text-blue-600 underline">packers.relaxgroup.in</a></li>
-                                    </ul>
-                                </ArticleSection>
-
-                                <div className="mt-8 text-sm text-gray-600">
-                                    <strong>Note:</strong> These terms may be updated occasionally. Continued use of our
-                                    services after such updates constitutes acceptance of the revised terms.
-                                </div>
-
-                                <div className="mt-6 pt-6 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                                    <div className="text-sm text-gray-600">
-                                        © {new Date().getFullYear()} Relax Packers &amp; Movers. All Rights Reserved.
-                                    </div>
-                                    <div className="flex gap-3">
-                                        <a
-                                            href="/"
-                                            className="inline-flex items-center px-4 py-2 rounded-md border hover:bg-gray-50 text-sm"
-                                        >
-                                            Home
-                                        </a>
-                                        <a
-                                            href="/contact"
-                                            className="inline-flex items-center px-4 py-2 rounded-md bg-indigo-600 text-white hover:brightness-105 text-sm"
-                                        >
-                                            Get Support
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                </div>
-            </main>
-
-            <Footer />
-        </div>
-    );
+export const metadata = {
+  title: "Terms & conditions",
+  description: "Terms and conditions governing the packing, moving, transport and storage services of Relax Packers & Movers.",
 }
 
-/* ---------- ArticleSection component (local) ---------- */
-/* Small accessible accordion + anchored heading used above */
-function ArticleSection({ id, title, children, open, onToggle }) {
-    return (
-        <article id={id} className="mb-6">
-            <div className="flex items-start gap-4">
-                <h2 className="text-lg font-semibold" style={{ scrollMarginTop: "100px" }}>{title}</h2>
-                <button
-                    onClick={onToggle}
-                    aria-expanded={open ? "true" : "false"}
-                    className="ml-auto inline-flex items-center gap-2 px-3 py-1 rounded-md text-sm bg-gray-100 hover:bg-gray-200"
-                >
-                    {open ? (
-                        <>
-                            <ChevronUp size={14} /> Collapse
-                        </>
-                    ) : (
-                        <>
-                            <ChevronDown size={14} /> Read
-                        </>
-                    )}
-                </button>
-            </div>
+const SECTIONS = [
+  {
+    id: "agreement",
+    title: "Service agreement",
+    body: [
+      "Relax Packers & Movers (“the Company”) provides packing, loading, transportation, unloading, unpacking, vehicle transport and storage services. A confirmed booking, whether by written acceptance of a quotation or by payment of the advance, constitutes a service agreement between the customer and the Company on these terms.",
+      "The scope of services is limited to the items listed on the quotation. Additional services requested on the day of the move are charged at the rates stated on the quotation or, where not stated, at the Company's prevailing rates.",
+    ],
+  },
+  {
+    id: "booking",
+    title: "Booking and payment",
+    body: [
+      "A booking is confirmed on receipt of the advance stated on the quotation. The balance is payable before unloading at the destination unless a different arrangement is recorded in writing.",
+      "Payments are accepted in cash, by UPI, bank transfer and other methods agreed at the time of booking. A money receipt is issued for every payment and can be downloaded from this website using the receipt reference.",
+      "Quotations are valid for 30 days from the date of issue. Prices may be revised if the volume, access conditions or route differ materially from the information provided at the time of quotation.",
+    ],
+  },
+  {
+    id: "customer",
+    title: "Customer responsibilities",
+    body: [
+      "The customer must provide accurate information on the items to be moved, the pickup and delivery addresses, and any access constraints such as stairs, lift availability, parking restrictions or narrow approaches. Undisclosed constraints may result in additional charges or rescheduling.",
+      "Valuables including cash, jewellery, documents and medicines should be carried personally. The customer or an authorised representative must be present at pickup and delivery to sign the inventory and delivery note.",
+    ],
+  },
+  {
+    id: "insurance",
+    title: "Insurance and liability",
+    body: [
+      "Transit insurance is available at the rate stated on the quotation and is recommended for all consignments. Where insurance is not opted for, the Company's liability for loss or damage is limited to the amount stated on the quotation.",
+      "The Company is not liable for loss or damage arising from natural events, accidents beyond its control, actions of third-party carriers where disclosed, items packed by the customer, inherent defects, or items excluded under these terms. Claims must be notified at the time of delivery and recorded on the delivery note.",
+    ],
+  },
+  {
+    id: "cancellation",
+    title: "Cancellation and refunds",
+    body: [
+      "Cancellations must be communicated in writing at least 24 hours before the scheduled pickup. Refunds of the advance, where applicable, are processed within seven working days after deduction of booking and administrative charges.",
+      "Cancellations within 24 hours of the scheduled pickup, or after the crew has been dispatched, may attract partial or no refund depending on costs already incurred.",
+    ],
+  },
+  {
+    id: "delays",
+    title: "Delays and rescheduling",
+    body: [
+      "Delivery windows are estimates. Delays caused by traffic, weather, strikes, checkpoint procedures or other events outside the Company's control do not entitle the customer to compensation. The coordinator will keep the customer informed and agree a revised window.",
+      "Rescheduling requested by the customer is subject to crew and vehicle availability. Where the consignment must be held, storage charges may apply.",
+    ],
+  },
+  {
+    id: "prohibited",
+    title: "Prohibited items",
+    body: [
+      "Hazardous or flammable materials, explosives, compressed gases, perishable food, live animals, illegal goods and any item restricted under applicable law will not be carried. The Company may refuse or discontinue carriage of any such item discovered during packing or transit.",
+    ],
+  },
+  {
+    id: "privacy",
+    title: "Privacy",
+    body: [
+      "Personal information collected for quotations, bookings and receipts is used solely to provide the service and meet statutory requirements. It is shared only with transport partners engaged for the consignment and with authorities where required by law. Data is stored securely and is not sold or used for unrelated marketing.",
+    ],
+  },
+  {
+    id: "dispute",
+    title: "Dispute resolution",
+    body: [
+      "The Company will attempt to resolve any complaint amicably through its customer service team. Unresolved disputes are subject to the exclusive jurisdiction of the courts at Cuttack, Odisha and are governed by the laws of India.",
+    ],
+  },
+  {
+    id: "contact",
+    title: "Contact",
+    body: [`For queries, support or claims, contact ${SITE.name}: ${SITE.phone}, ${SITE.email}, ${SITE.hq.line1}, ${SITE.hq.line2}, ${SITE.hq.city}, ${SITE.hq.state} ${SITE.hq.pin}.`],
+  },
+]
 
-            <div className={`mt-3 text-sm text-gray-700 transition-all ${open ? "max-h-screen" : "max-h-0 overflow-hidden"}`}>
-                <div className="prose max-w-none">{children}</div>
-            </div>
-        </article>
-    );
+export default function TermsPage() {
+  const year = new Date().getFullYear()
+  return (
+    <>
+      <SiteHeader />
+      <main>
+        <PageHero compact eyebrow="Legal" title="Terms & conditions" text={`These terms govern all services provided by ${SITE.name}. By confirming a booking you accept them in full.`} />
+        <section className="section">
+          <div className="container-x grid grid-cols-1 gap-10 lg:grid-cols-12">
+            <aside className="lg:col-span-3">
+              <div className="no-print lg:sticky lg:top-24">
+                <div className="card p-5">
+                  <div className="text-[11px] font-semibold uppercase tracking-wider text-muted">On this page</div>
+                  <ol className="mt-3 space-y-1.5 text-sm">
+                    {SECTIONS.map((s, i) => (
+                      <li key={s.id}>
+                        <a href={`#${s.id}`} className="flex gap-2 text-body hover:text-navy-900">
+                          <span className="w-5 shrink-0 text-muted">{i + 1}.</span>
+                          {s.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                  <div className="mt-5 border-t border-line pt-4 text-xs text-muted">Last updated: {year}</div>
+                  <PrintButton className="btn btn-outline btn-sm mt-4 w-full" />
+                </div>
+              </div>
+            </aside>
+            <article className="lg:col-span-9">
+              <div className="card p-6 sm:p-10">
+                {SECTIONS.map((s, i) => (
+                  <section key={s.id} id={s.id} className="scroll-mt-28 border-b border-line py-8 first:pt-0 last:border-b-0 last:pb-0">
+                    <h2 className="text-xl font-semibold text-ink">
+                      {i + 1}. {s.title}
+                    </h2>
+                    {s.body.map((p, j) => (
+                      <p key={j} className="mt-3 text-[15px] leading-relaxed text-body">
+                        {p}
+                      </p>
+                    ))}
+                  </section>
+                ))}
+                <div className="mt-10 flex flex-col gap-4 border-t border-line pt-6 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+                  <p>These terms may be updated from time to time. Continued use of our services after an update constitutes acceptance of the revised terms.</p>
+                  <Link href="/contact" className="btn btn-primary btn-sm no-print shrink-0">
+                    Contact support
+                  </Link>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+      <SiteFooter />
+    </>
+  )
 }

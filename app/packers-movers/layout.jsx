@@ -1,18 +1,11 @@
-// app/packers-movers/layout.jsx
-
 export const metadata = {
   title: {
-    template: '%s | Relax Packers and Movers',
-    default: 'Relax Packers and Movers - Packers & Movers Services',
+    template: "%s | Relax Packers & Movers",
+    default: "Packers & Movers by district in Odisha | Relax Packers & Movers",
   },
-  description:
-    'Professional packers and movers services across Odisha with GPS tracking and affordable rates.',
-};
+  description: "Professional packers and movers across all 30 districts of Odisha with local surveys, written quotations and GPS-tracked transport.",
+}
 
 export default function PackersMoversLayout({ children }) {
-  return (
-    <>
-      {children}
-    </>
-  );
+  return children
 }
