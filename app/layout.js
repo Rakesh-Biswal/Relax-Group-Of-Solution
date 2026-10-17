@@ -7,7 +7,7 @@ import { Toaster } from "sonner"
 const SITE_URL = "https://packers.relaxgroup.in"
 const SITE_NAME = "Relax Packers & Movers"
 const BUSINESS_NAME = "Relax Group"
-const BUSINESS_PHONE = "+91-9777012315"
+const BUSINESS_PHONE = "+91-9777652315"
 const BUSINESS_EMAIL = "bookrelaxpackers@gmail.com"
 const BUSINESS_ADDRESS = {
   street: "KHATA NO- 313/143 PLOT NO- 945/1260 TANGARHUDA, SATINAGAR, MARKAT NAGAR",
