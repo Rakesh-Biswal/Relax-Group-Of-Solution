@@ -8,8 +8,9 @@ import QuoteForm from "@/components/site/QuoteForm"
 import StatsBand from "@/components/site/StatsBand"
 import FAQ from "@/components/site/FAQ"
 import ServiceIcon from "@/components/site/ServiceIcon"
+import PhotoGallery from "@/components/site/PhotoGallery"
 import { CTABand, SectionHeading, TestimonialsSection } from "@/components/site/Blocks"
-import { BRANCHES, CLIENTS, FAQS, PROCESS, SERVICES, SERVICE_STATES, SITE, WHY_US } from "@/lib/site"
+import { BRANCHES, CLIENTS, FAQS, GALLERY, PROCESS, SERVICES, SERVICE_STATES, SITE, WHY_US } from "@/lib/site"
 
 export const metadata = {
   title: "Relax Packers & Movers | Professional Packers & Movers in Odisha & Across India",
@@ -145,8 +146,27 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Process */}
+        {/* Work gallery */}
         <section className="section">
+          <div className="container-x">
+            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+              <SectionHeading
+                eyebrow="Our work"
+                title="Recent packing & moving jobs"
+                text="Photographs from recent moves — furniture wrapping, loaded vehicles, two-wheeler packing and labelled consignments."
+              />
+              <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-navy-700 hover:text-navy-900">
+                View full gallery <ArrowRight size={15} />
+              </Link>
+            </div>
+            <div className="mt-10">
+              <PhotoGallery items={GALLERY.slice(0, 8)} />
+            </div>
+          </div>
+        </section>
+
+        {/* Process */}
+        <section className="section bg-surface-2">
           <div className="container-x">
             <SectionHeading eyebrow="How it works" title="A four-step process, the same on every move" align="center" />
             <ol className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">

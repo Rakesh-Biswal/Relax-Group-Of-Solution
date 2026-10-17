@@ -15,7 +15,7 @@ const COMPANY = {
   name: "RELAX PACKERS & MOVERS",
   tagline: "A unit of Relax Group",
   address: "Khata No. 313/143, Plot No. 945/1260, Tangarhuda, Satinagar, Markat Nagar, Cuttack, Odisha 753014",
-  phone: "+91 97776 52315",
+  phone: "+91 97770 12315",
   email: "bookrelaxpackers@gmail.com",
   gstin: "21BUQPN8897R1Z8",
   web: "packers.relaxgroup.in",
